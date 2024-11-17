@@ -1,0 +1,212 @@
+.mostrar_den {
+    overflow-x: auto; /* Agrega una barra de desplazamiento horizontal cuando el contenido es demasiado grande */
+}
+
+.mostrar_den table {
+    width: 100%; /* Haz que la tabla ocupe todo el ancho disponible */
+    border-collapse: collapse;
+    color: black;
+}
+
+.mostrar_den th,
+.mostrar_den td {
+    padding: 8px;
+    border: 1px solid #050505;
+}
+
+.mostrar_den th {
+    background-color: #1307bd; /* Cambiado a un gris claro */
+}
+
+.mostrar_den tbody tr{
+    background-color: #f2f2f2; /* Cambiado a un gris claro */
+}
+
+.mostrar_den tbody tr:hover {
+    background-color: #ddd; /* Cambiado a un tono más claro de gris */
+}
+
+.mostrar_den p {
+    margin-top: 20px; /* Espacio superior para el mensaje de no se encontraron denuncias */
+}
+
+/* Estilos para mostrar las denuncias en el admin */
+
+/*.container_mostrar_denuncias_adm {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.container_mostrar_denuncias_adm table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.container_mostrar_denuncias_adm th, .container_mostrar_denuncias_adm td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.container_mostrar_denuncias_adm th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.container_mostrar_denuncias_adm tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.container_mostrar_denuncias_adm select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.container_mostrar_denuncias_adm form {
+    margin: 0;
+}*/
+
+/* mostrar clientes */
+
+
+.container_usuario {
+    display: block;
+    margin-bottom: 20px;
+}
+.container_usuario .table-container {
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    padding: 20px;
+    width: 1200px;
+}
+.container_usuario table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.container_usuario table, .container_usuario th, .container_usuario td {
+    border: 1px solid #555454;
+}
+.container_usuario th, .container_usuario td {
+    padding: 8px;
+    text-align: left;
+}
+.container_usuario th {
+    background-color: #666565;
+}
+.container_usuario img {
+    max-width: 100px;
+    height: auto;
+}
+
+/* mostrar denuncias pendientes */
+
+.citaciones_pendientes {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1em;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+}
+
+.citaciones_pendientes thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.citaciones_pendientes th, .citaciones_pendientes td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #302f2f;
+}
+
+.citaciones_pendientes tbody tr {
+    border-bottom: 1px solid #000000;
+}
+
+.citaciones_pendientes tbody tr:nth-of-type(even) {
+    background-color: #8e8c8c;
+}
+
+.citaciones_pendientes tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.citaciones_pendientes tbody tr:hover {
+    background-color: #413d3d;
+    cursor: pointer;
+}
+
+/*Tramites*/
+
+.container-tramites {
+    width: 80%;
+    max-width: 1200px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+
+
+.container-tramites .form-section.active {
+    display: block;
+}
+
+.container-tramites form {
+    display: flex;
+    flex-direction: column;
+}
+
+.container-tramites label {
+    margin-top: 10px;
+}
+
+.container-tramites input, .container-tramites select, .container-tramites textarea {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.container-tramites button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.container-tramites button:hover {
+    background-color: #45a049;
+}
+
+.container-tramites fieldset {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.container-tramites legend {
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .container-tramites {
+        width: 95%;
+    }
+}

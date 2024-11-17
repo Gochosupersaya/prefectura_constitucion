@@ -1,0 +1,246 @@
+.form-denuncia {
+    background-color: #060af2;
+    width: 60%;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para hacer el formulario responsive */
+@media screen and (max-width: 600px) {
+    
+    .form-denuncia {
+        
+        width: 350px;
+        
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    input[type="text"],
+    select,
+    textarea {
+        font-size: 14px;
+    }
+    
+    .btn-submit {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/*Imprimir tramites*/
+
+.constancia-table-t {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    color: #ffffff;
+    background-color: #444;
+}
+
+.constancia-table-t th, .constancia-table-t td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.constancia-table-t th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+
+
+.constancia-table-t tr:hover {
+    background-color: #959191;
+}
+
+.constancia-table-t th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #3db028;
+    color: rgb(255, 255, 255);
+}
+
+/*Informacion usuario*/
+
+.usuario_info {
+    padding: 20px;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.usuario_info h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #333;
+    font-weight: 700;
+}
+
+.usuario_info h3 {
+    font-size: 20px;
+    color: #444;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.usuario_info .info-section {
+    margin-bottom: 20px;
+}
+
+.usuario_info .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.usuario_info .info-row div {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.usuario_info .info-row div label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.usuario_info .info-row div p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.usuario_info .photo-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.usuario_info .photo-container .photo {
+    width: 30%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.usuario_info .photo-container .photo img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.usuario_info .photo-container .photo img:hover {
+    transform: scale(1.1);
+}
+
+.usuario_info .photo-container .photo p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Estilos del modal */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.9); 
+}
+
+.modal-content {
+    margin: 15% auto; 
+    display: block;
+    width: 80%; 
+    max-width: 700px; 
+}
+
+.modal-content, #caption {
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}

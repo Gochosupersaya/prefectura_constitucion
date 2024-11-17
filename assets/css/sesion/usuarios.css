@@ -1,0 +1,524 @@
+.usuario button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+}
+
+.usuario button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Estilos para el modal */
+.usuario .modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Posición fija */
+    z-index: 1000; /* Asegura que el modal esté en la parte superior */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Alto completo */
+    overflow: auto; /* Permite desplazamiento si es necesario */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+}
+
+/* Contenido del modal */
+.usuario .modal-content {
+    background-color: #fff; /* Fondo blanco */
+    margin: 15% auto; /* Centrado vertical y horizontal */
+    padding: 20px; /* Espaciado interno */
+    border: 1px solid #888; /* Bordes del modal */
+    width: 80%; /* Ancho del modal */
+    max-width: 600px; /* Ancho máximo del modal */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra */
+}
+
+.usuario .modal-content h5, .usuario .modal-content h2{
+    color: #000;
+}
+
+/* Botón de cierre */
+.usuario .close {
+    color: #aaa; /* Color del texto */
+    float: right; /* Alinear a la derecha */
+    font-size: 28px; /* Tamaño de la fuente */
+    font-weight: bold; /* Negrita */
+}
+
+.usuario .close:hover,
+.usuario .close:focus {
+    color: black; /* Color al pasar el mouse */
+    text-decoration: none; /* Sin subrayado */
+    cursor: pointer; /* Cambia el cursor */
+}
+
+/* Estilos de los inputs y el botón de envío */
+.usuario .input-box {
+    margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+.usuario .input-field {
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Bordes */
+    border-radius: 4px; /* Bordes redondeados */
+    box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+}
+
+.usuario .submit {
+    background-color: #4CAF50; /* Color de fondo */
+    color: white; /* Color del texto */
+    padding: 10px; /* Espaciado interno */
+    border: none; /* Sin bordes */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor */
+}
+
+.usuario .submit:hover {
+    background-color: #45a049; /* Color al pasar el mouse */
+}
+
+/* Estilos para las etiquetas */
+.usuario label {
+    margin-bottom: 5px; /* Espaciado inferior */
+    display: block; /* Asegura que las etiquetas ocupen toda la línea */
+}
+
+/*boton de estado de usuarios*/
+
+.boton_de_estado select {
+    padding: 5px;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+.boton_de_estado select option[value="Activo"] {
+    background-color: green;
+}
+
+.boton_de_estado select option[value="Inactivo"] {
+    background-color: red;
+}
+
+/*modal de estado*/
+
+
+
+.modal_estado  {
+    display: none; /* Ocultar el modal por defecto */
+    color: #000;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+}
+
+.modal_estado .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal_estado .modal-icon {
+    font-size: 30px;
+    color: green; /* Color del icono */
+    margin-bottom: 10px;
+}
+
+.modal_estado .close {
+    color: #aaa;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal_estado .close:hover,
+.modal_estado .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*-----------------modal de ingreso usuario empleado*--------------------/
+
+/* Estilos para el fondo del modal */
+.modal_ingreso {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Posición fija */
+    z-index: 1000; /* Asegura que el modal esté en la parte superior */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Alto completo */
+    overflow: auto; /* Permite desplazamiento si es necesario */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+}
+
+.modal_ingreso.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Estilos para el contenido del modal */
+.modal_ingreso .modal-content {
+    background-color: #fff; /* Fondo blanco */
+    margin: 15% auto; /* Centrado vertical y horizontal */
+    padding: 20px; /* Espaciado interno */
+    border: 1px solid #888; /* Bordes del modal */
+    width: 80%; /* Ancho del modal */
+    max-width: 600px; /* Ancho máximo del modal */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra */
+}
+
+.modal_ingreso .modal-content h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+/* Botón de cierre */
+.modal_ingreso .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff5c5c;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos para el formulario */
+.modal_ingreso .input-box {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal_ingreso .input-field, select {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.modal_ingreso .submit {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal_ingreso .submit:hover {
+    background-color: #45a049;
+}
+
+/* Vista previa de la imagen */
+.modal_ingreso .image-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.modal_ingreso .image-preview img {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+
+
+/*-----------------fin modal de ingreso usuario empleado*--------------------*/
+
+/*-----------------modal de iamgen*--------------------*/
+/* Estilos de la imagen en la tabla */
+/* Estilos generales de la imagen */
+.imagen-tabla {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.2s ease;
+}
+
+.imagen-tabla:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos del modal */
+.modal_imagen {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Imagen dentro del modal */
+.modal_imagen .modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    height: auto;
+    max-height: 80vh;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+/* Botón de cierre sobre la imagen */
+.modal_imagen .close {
+    position:unset;
+    top: 10px; /* Ajusta la posición para que quede sobre la imagen */
+    right: 10px; /* Mantiene el botón a la derecha */
+    color: #fff;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    z-index: 10;
+}
+
+.modal_imagen .close:hover {
+    background-color: rgba(255, 76, 76, 0.8);
+    color: #fff;
+}
+
+/* Botón de descarga */
+.modal_imagen .download-button {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+}
+
+.modal_imagen .download-button:hover {
+    background-color: #45a049;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .modal_imagen {
+        padding-top: 60px;
+    }
+
+    .modal_imagen .modal-content {
+        width: 95%;
+        max-width: 300px;
+    }
+
+    .modal_imagen .download-button {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    .modal_imagen .close {
+        font-size: 30px; /* Tamaño más pequeño para pantallas pequeñas */
+        top: 10px;
+        right: 10px;
+    }
+}
+
+/*----------------- fin modal de iamgen*--------------------*/
+
+/*----------------- estilos de las tablas y modal de detalles*--------------------*/
+
+.container_usuario {
+    margin: 20px auto;
+    max-width: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.container_usuario .table-container {
+    overflow-x: auto;
+}
+
+.container_usuario .table-wrapper {
+    overflow-y: scroll;
+    max-height: 400px; /* Controla la altura de la tabla */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.container_usuario table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.container_usuario th, .container_usuario td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.container_usuario th {
+    background-color: #f4f4f4;
+}
+
+.container_usuario button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+/* Botón Detalles */
+.container_usuario .btn-detalles {
+    background-color: #007bff; /* Azul */
+}
+
+.container_usuario .btn-detalles:hover {
+    background-color: #0056b3;
+}
+
+/* Botón Editar */
+.container_usuario .btn-editar {
+    background-color: #ff9800; /* Naranja */
+}
+
+.container_usuario .btn-editar:hover {
+    background-color: #e68900;
+}
+
+.container_usuario thead{
+    color: #000;
+}
+
+
+/* Modal de Detalles */
+.modal_detalle {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_detalle .modal-content {
+    color: #000;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 10%;
+    overflow: hidden;
+}
+
+.modal_detalle .modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal_detalle .modal-content th {
+    background-color: #ADD8E6;
+    padding: 10px;
+    text-align: left;
+}
+
+.modal_detalle .modal-content td {
+    padding: 8px;
+    border-top: 1px solid #ddd;
+}
+
+
+.modal_detalle h3{
+    color: #0056b3;
+}
+/* Estilos para contenedor de imágenes y títulos */
+.modal_detalle .image-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    
+    text-align: center;
+}
+
+.modal_detalle .image-item {
+    text-align: center;
+}
+
+.modal_detalle .image-item p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.modal_detalle .imagen-tabla {
+    max-width: 100px;
+    cursor: pointer;
+    display: block;
+    margin: auto;
+}
+
+/* Scrollable content in responsive view */
+@media (max-width: 600px) {
+    .modal_detalle .modal-content {
+        max-height: 80vh; /* Limita la altura máxima del modal */
+        overflow-y: auto; /* Habilita el desplazamiento vertical solo cuando es necesario */
+        margin: auto; /* Centra el modal en la pantalla */
+        margin-top: 20%;
+        margin-bottom: 20%;
+    }
+}
+
+/*----------------- fin estilos de las tablas y modal de detalles*--------------------*/
