@@ -522,3 +522,30 @@
 }
 
 /*----------------- fin estilos de las tablas y modal de detalles*--------------------*/
+
+/*----------------- inicio estilos para los estados de las*--------------------*/
+.estado-enviada {
+    background-color: blue;
+    color: white;
+}
+.estado-en_revision {
+    background-color: orange;
+    color: white;
+}
+.estado-rechazada {
+    background-color: red;
+    color: white;
+}
+.estado-aprobada_pendiente {
+    background-color: yellow;
+    color: black;
+}
+.estado-en_revision_pago {
+    background-color: white;
+    color: black;
+}
+.estado-Finalizada {
+    background-color: green;
+    color: white;
+}
+

@@ -193,6 +193,36 @@ $sql_sin_usuario->execute();
 $result_sin_usuario = $sql_sin_usuario->get_result();
 ?>
 
+<?php
+include('conexion.php'); // Asegúrate de tener el archivo de conexión correcto
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['cedula'])) {
+    echo "Debe iniciar sesión para ver las constancias.";
+    exit;
+}
+
+// Consulta para obtener las constancias de notificación de evento público
+$sql_constancia_evento = $conexion->prepare("
+    SELECT 
+        p.Per_cedul, p.Per_nombr, p.Per_apell, p.Per_telef, 
+        s.Sep_codig, s.Sep_tipoe, s.Sep_motiv, s.Sep_aldea, 
+        s.Sep_calle, s.Sep_carre, s.Sep_delug, s.Sep_finic, 
+        s.Sep_hinic, s.Sep_ffinl, s.Sep_hfinl, s.Sep_durac, 
+        s.Sep_asist, s.Sep_statu, s.Sep_sedeb, s.Sep_fsoli, 
+        s.Sep_femis, s.Sep_frech, s.Sep_motir,
+        t.Tpe_nombr, a.Ald_nombr
+    FROM Prefttsep s
+    JOIN Prefttcli c ON s.Sep_clien = c.Cli_codig
+    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+    JOIN Preftmtpe t ON s.Sep_tipoe = t.Tpe_codig
+    JOIN Preftmald a ON s.Sep_aldea = a.Ald_codig
+");
+$sql_constancia_evento->execute();
+$result_constancia_evento = $sql_constancia_evento->get_result();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     
@@ -368,27 +398,27 @@ $result_sin_usuario = $sql_sin_usuario->get_result();
 				<section class="container">
 
 				<div class="container_mostrar_denuncias_adm">
-				<h1>Listado de Denuncias</h1>
-    <?php if ($result_denuncias->num_rows > 0): ?>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-					<th>N° Denuncia</th>
-                    <th>Cédula del Denunciante</th>
-                    <th>Cédula del Denunciado</th>
-                    <th>Tipo de Denuncia</th>
-                    <th>Motivo</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $result_denuncias->fetch_assoc()): ?>
-                    <tr>
-						<td><?php echo htmlspecialchars($row['Den_codig']); ?></td>
-                        <td><?php echo htmlspecialchars($row['cedula_denunciante']); ?></td>
-                        <td><?php echo htmlspecialchars($row['cedula_denunciado']); ?></td>
-                        <td><?php echo obtenerTipoDenuncia($row['Den_tipod'], $conexion); ?></td>
+				    <h1>Listado de Denuncias</h1>
+                    <?php if ($result_denuncias->num_rows > 0): ?>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+					            <th>N° Denuncia</th>
+                                <th>Cédula del Denunciante</th>
+                                <th>Cédula del Denunciado</th>
+                                <th>Tipo de Denuncia</th>
+                                <th>Motivo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result_denuncias->fetch_assoc()): ?>
+                            <tr>
+						        <td><?php echo htmlspecialchars($row['Den_codig']); ?></td>
+                                <td><?php echo htmlspecialchars($row['cedula_denunciante']); ?></td>
+                                <td><?php echo htmlspecialchars($row['cedula_denunciado']); ?></td>
+                                <td><?php echo obtenerTipoDenuncia($row['Den_tipod'], $conexion); ?></td>
                         <td><?php echo htmlspecialchars($row['Den_motiv']); ?></td>
                         <td><?php echo htmlspecialchars($row['Den_fecha']); ?></td>
                         <td>
@@ -730,235 +760,113 @@ $result_sin_usuario = $sql_sin_usuario->get_result();
 					
 					<!-- Section Title -->
 					<div class="header-page mt-70 mob-mt">
-						<h2>Resume</h2>
+						<h2>Trámites</h2>
     					<span></span>
 					</div>
-					
-					<!-- Experience & Education Row Start -->
-					<div class="row mt-100">
-					
-						<!-- Experience Column Start -->
-						<div class="col-lg-6 col-sm-12">
-						
-							<!-- Header Block -->
-							<div class="header-box mb-50">
-								<h3>Experience</h3>
-							</div>
-						
-							<div class="experience box">
-								
-								<!-- Experience Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Web Design</h4>
-										<p><i class="far fa-calendar-alt"></i>2012 - 2014 | Сompany Inc</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
 
-								<!-- Experience Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Fornt-End Developer</h4>
-										<p><i class="far fa-calendar-alt"></i>2014 - 2015 | Сompany Inc</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
+                    <div class="usuario">
 
-								<!-- Experience Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Web Development</h4>
-										<p><i class="far fa-calendar-alt"></i>2015 - 2019 | Сompany Inc</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
-							</div>
-						</div>
-							
-						<!-- Education Column Start -->
-						<div class="col-lg-6 col-sm-12">
-						
-							<!-- Header Block -->
-							<div class="header-box mb-50 mob-box-mt">
-								<h3>Education</h3>
-							</div>
-						
-							<div class="experience box">
+                        
+                    <div class="container_usuario">
+    <div class="table-container">
+        <button onclick="abrirModalAgregarConstancia()" class="btn-agregar-usuario">Agregar Constancia</button>
+        <h2>Constancias de Notificación de Evento Público</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cédula del Solicitante</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Fecha de solicitud</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($result_constancia_evento->num_rows > 0): ?>
+                        <?php while ($row = $result_constancia_evento->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['Per_cedul']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Per_nombr']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Sep_fsoli']); ?></td>
+                                <td>
+                                <td>
+    <div class="boton_de_estado">
+        <select onchange="updateStatus_2('<?php echo $row['Sep_codig']; ?>', this)" 
+            style="background-color: <?php 
+                switch ($row['Sep_statu']) {
+                    case 'enviada':
+                        echo 'blue';
+                        break;
+                    case 'en_revision':
+                        echo 'orange';
+                        break;
+                    case 'rechazada':
+                        echo 'red';
+                        break;
+                    case 'aprobada_pendiente':
+                        echo 'yellow';
+                        break;
+                    case 'en_revision_pago':
+                        echo 'white'; // Cambiado a blanco
+                        break;
+                    case 'Finalizada':
+                        echo 'green';
+                        break;
+                    default:
+                        echo 'gray';
+                }
+            ?>; color: white;">
+            <option value="enviada" <?php echo $row['Sep_statu'] === 'enviada' ? 'selected' : ''; ?>>Enviada</option>
+            <option value="en_revision" <?php echo $row['Sep_statu'] === 'en_revision' ? 'selected' : ''; ?>>En Revisión</option>
+            <option value="rechazada" <?php echo $row['Sep_statu'] === 'rechazada' ? 'selected' : ''; ?>>Rechazada</option>
+            <option value="aprobada_pendiente" <?php echo $row['Sep_statu'] === 'aprobada_pendiente' ? 'selected' : ''; ?>>Aprobada Pendiente de Pago</option>
+            <option value="en_revision_pago" <?php echo $row['Sep_statu'] === 'en_revision_pago' ? 'selected' : ''; ?>>Pago en Revisión</option>
+            <option value="Finalizada" <?php echo $row['Sep_statu'] === 'Finalizada' ? 'selected' : ''; ?>>Finalizada</option>
+        </select>
+    </div>
+</td>
+                                </td>
+                                <td>
+                                    <button class="btn-editar" onclick='openEditModal(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
+                                    <button class="btn-detalles" onclick="openDetailsModal(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6">No hay constancias de notificación de evento público.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-								<!-- Education Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Phd</h4>
-										<p><i class="far fa-calendar-alt"></i>2011 - 2013 | Computer Science</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
+<!-- Modal para Detalles -->
+<div id="detailsModal" class="modal_detalle">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetailsModal()">&times;</span>
+        <h3>Detalles de la Constancia</h3>
+        <div id="modal-details-content" class="modal-scrollable"></div>
+    </div>
+</div>
 
-								<!-- Education Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Post Graduation</h4>
-										<p><i class="far fa-calendar-alt"></i>2013 - 2016 | Computer Science</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
+<!-- Modal para Fotos -->
+<div id="imageModal" class="modal_imagen">
+    <span class="close" onclick="closeImageModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <a id="downloadLink" download="imagen.jpg" class="download-button">Descargar</a>
+</div>
 
-								<!-- Education Item -->
-								<div class="item">
-									<div class="main">
-										<h4>Gradution</h4>
-										<p><i class="far fa-calendar-alt"></i>2016 - 2018 | Computer Science</p>
-									</div>
-									<p>Work experience is essential for getting a job. Whether it's a short work placement or a longer internship, work experience is always viewed favourably by employers and can help you decide your future career.</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				
-					<!-- Skills Row Start -->
-					<div class="row mt-100">
-					
-						<!-- Header Block -->
-						<div class="col-md-12">
-							<div class="header-box mb-50">
-								<h3>Skills</h3>
-							</div>
-						</div>
-					</div>
-					
-					<div class="box skills">
-						<div class="row">
-							<div class="col-lg-6 col-sm-6">
 
-								<!-- Skill Item -->
-								<div class="skill-item">
-									<h4 class="progress-title">HTML5</h4>
-									<div class="progress">
-										<div class="progress-bar" style="width:98%">
-											<div class="progress-value">98%</div>
-										</div>
-									</div>
-								</div>
 
-								<!-- Skill Item -->
-								<div class="skill-item">
-									<h4 class="progress-title">CSS3</h4>
-									<div class="progress">
-										<div class="progress-bar" style="width:85%">
-											<div class="progress-value">85%</div>
-										</div>
-									</div>
-								</div>
 
-								<!-- Skill Item -->
-								<div class="skill-item">
-									<h4 class="progress-title">JavaScript</h4>
-									<div class="progress">
-										<div class="progress-bar" style="width:90%">
-											<div class="progress-value">90%</div>
-										</div>
-									</div>
-								</div>
-							
-								<!-- Skill Item -->
-								<div class="skill-item">
-									<h4 class="progress-title">UI/UX designer</h4>
-									<div class="progress">
-										<div class="progress-bar" style="width:77%">
-											<div class="progress-value">77%</div>
-										</div>
-									</div>
-								</div>
-							</div>
+                    </div>
+                    
 
-							<div class="col-lg-6 col-sm-6">
-								<div class="row">
-									
-									<!-- Skill Item -->
-									<div class="col-lg-6 col-sm-6">
-										<div class="chart" data-percent="80" data-bar-color="#fff"> 80% <p>PHP</p></div>
-									</div>
-									
-									<!-- Skill Item -->
-									<div class="col-lg-6 col-sm-6">
-										<div class="chart" data-percent="70" data-bar-color="#fff"> 70% <p>Illustrator</p></div>
-									</div>
-									
-									<!-- Skill Item -->
-									<div class="col-lg-6 col-sm-6">
-										<div class="chart" data-percent="60" data-bar-color="#fff"> 60% <p>Photoshop</p></div>
-									</div>
-									
-									<!-- Skill Item -->
-									<div class="col-lg-6 col-sm-6">
-										<div class="chart" data-percent="90" data-bar-color="#fff"> 90% <p>AngularJS</p></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				
-					<!-- Work Process Row Start -->
-					<div class="row mt-100">
-					
-						<!-- Header Block -->
-						<div class="col-md-12">
-							<div class="header-box mb-50">
-								<h3>My Working Process</h3>
-							</div>
-						</div>
-					</div>
-					
-					<div class="box work-process mb-100">
-						<div class="row">
-							<div class="col-lg-4 col-sm-12 ltr">
-							
-                    			<!-- Working Process Item-->
-                          	 	<div class="single-wp width-sm process-1">
-									<p class="wp-step">01</p>
-									<h4 class="wp-title">Discuss idea</h4>
-									<p>I could describe these conceptions, also impress upon paper all that is living.</p>
-								</div>
 
-								<!-- Working Process Item-->
-								<div class="single-wp width-sm process-2">
-									<p class="wp-step">02</p>
-									<h4 class="wp-title">Creative concept</h4>
-									<p>I could describe these conceptions, also impress upon paper all that is living.</p>
-								</div>
-							</div>
-					
-							<div class="col-lg-4 hidden-sm">
-							
-								<!-- Working Process Circle-->
-								<div class="wp-circle">
-									<h4>Working Process</h4>
-									<span class="dots top-l"></span>
-									<span class="dots bottom-l"></span>
-									<span class="dots top-r"></span>
-									<span class="dots bottom-r"></span>
-								</div>
-							</div>
-					
-							<div class="col-lg-4 col-sm-12 rtl">
-						
-								<!-- Working Process Item-->
-								<div class="single-wp width-sm process-3">
-									<p class="wp-step">03</p>
-									<h4 class="wp-title">Web concept</h4>
-									<p>I could describe these conceptions, also impress upon paper all that is living.</p>
-								</div>
-	
-								<!-- Working Process Item-->
-								<div class="single-wp width-sm process-4">
-									<p class="wp-step">04</p>
-									<h4 class="wp-title">Final concept</h4>
-									<p>I could describe these conceptions, also impress upon paper all that is living.</p>
-								</div>
-							</div>
-						</div>
-					</div>
 			  	</section>
          	</div>
 			 
@@ -2132,6 +2040,134 @@ $result_sin_usuario = $sql_sin_usuario->get_result();
 		</div>
 		</div>
 		
+        <script>
+    function openDetailsModal(constancia) {
+    const modal = document.getElementById("detailsModal");
+    const modalContent = document.getElementById("modal-details-content");
+
+    modalContent.innerHTML = `
+        <table>
+            <tr>
+                <th colspan="2">Datos del Solicitante</th>
+            </tr>
+            <tr>
+                <td><strong>Cédula:</strong> ${constancia.Per_cedul}</td>
+            </tr>
+            <tr>
+                <td><strong>Nombre:</strong> ${constancia.Per_nombr}</td>
+                <td><strong>Apellido:</strong> ${constancia.Per_apell}</td>
+            </tr>
+            <tr>
+                <th colspan="2">Información del Evento Público</th>
+            </tr>
+            <tr>
+                <td><strong>Tipo de Evento:</strong> ${constancia.Tpe_nombr}</td>
+                <td><strong>Motivo:</strong> ${constancia.Sep_motiv}</td>
+            </tr>
+            <tr>
+                <td><strong>Aldea:</strong> ${constancia.Ald_nombr}</td>
+                <td><strong>Calle:</strong> ${constancia.Sep_calle}</td>
+            </tr>
+            <tr>
+                <td><strong>Carrera:</strong> ${constancia.Sep_carre}</td>
+                <td><strong>Lugar:</strong> ${constancia.Sep_delug}</td>
+            </tr>
+            <tr>
+                <td><strong>Fecha de Inicio:</strong> ${constancia.Sep_finic}</td>
+                <td><strong>Hora de Inicio:</strong> ${constancia.Sep_hinic}</td>
+            </tr>
+            <tr>
+                <td><strong>Fecha de Fin:</strong> ${constancia.Sep_ffinl}</td>
+                <td><strong>Hora de Fin:</strong> ${constancia.Sep_hfinl}</td>
+            </tr>
+            <tr>
+                <td><strong>Duración (Minutos):</strong> ${constancia.Sep_durac }</td>
+                <td><strong>Posible Asistencia:</strong> ${constancia.Sep_asist}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="image-container">
+                        <div class="image-item">
+                            <p><strong>Bauché Sedebat:</strong></p>
+                            ${constancia.Sep_sedeb ? `<img src="${constancia.Sep_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${constancia.Sep_sedeb}')">` : '<p>No disponible</p>'}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">Fechas de Solicitud</th>
+            </tr>
+            <tr>
+                <td><strong>Fecha de Solicitud:</strong> ${constancia.Sep_fsoli ? constancia.Sep_fsoli : 'No disponible'}</td>
+                <td><strong>Fecha de Emisión:</strong> ${constancia.Sep_femis ? constancia.Sep_femis : 'No disponible'}</td>
+            </tr>
+            <tr>
+                <td><strong>Fecha de Rechazo:</strong> ${constancia.Sep_frech ? constancia.Sep_frech : 'No disponible'}</td>
+                <td><strong>Motivo de Rechazo:</strong> ${constancia.Sep_motir ? constancia.Sep_motir : 'No disponible'}</td>
+            </tr>
+        </table>
+    `;
+
+    modal.style.display = "block";
+}
+        function closeDetailsModal() {
+            document.getElementById("detailsModal").style.display = "none";
+        }
+
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+            const downloadLink = document.getElementById("downloadLink");
+
+            modal.style.display = "block";
+            modalImage.src = imageSrc;
+            downloadLink.href = imageSrc;
+        }
+
+        function closeImageModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        function updateStatus_2(codigo, estadoSelect) {
+    const estado = estadoSelect.value;
+
+    // Cambiar el color del select según el estado
+    estadoSelect.style.backgroundColor = getColorByStatus(estado);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "./constancias/actualizar_constancia_evento.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Aquí puedes manejar la respuesta del servidor si es necesario
+            console.log(xhr.responseText); // Para depuración
+            // Puedes mostrar un mensaje de éxito o actualizar la interfaz si es necesario
+        }
+    };
+    xhr.send("codigo=" + codigo + "&estado=" + estado);
+}
+
+// Función para obtener el color según el estado
+function getColorByStatus(estado) {
+    switch (estado) {
+        case 'enviada':
+            return 'blue';
+        case 'en_revision':
+            return 'orange';
+        case 'rechazada':
+            return 'red';
+        case 'aprobada_pendiente':
+            return 'yellow';
+        case 'en_revision_pago':
+            return 'white';
+        case 'Finalizada':
+            return 'green';
+        default:
+            return 'gray';
+    }
+}
+    </script>
+
 		<!-- All Script -->
 		<script src="../assets/js/sesion/jquery.min.js"></script>
 		<script src="../assets/js/sesion/isotope.pkgd.min.js"></script>

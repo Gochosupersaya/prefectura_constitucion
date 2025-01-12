@@ -157,7 +157,7 @@ $cliente_actual = $result_cliente_actual->fetch_assoc()['Cli_codig'];
 
 // Notificación de Evento Público
 $sql_notificacion_evento = $conexion->prepare("
-    SELECT Pep_clien, Sep_motiv, Ald_nombr, Sep_calle, Sep_carre, Sep_delug, Sep_finic, Sep_hinic, Sep_ffinl, Sep_hfinl, TIMESTAMPDIFF(MINUTE, CONCAT(Sep_finic, ' ', Sep_hinic), CONCAT(Sep_ffinl, ' ', Sep_hfinl)) AS Sep_durac, Sep_asist, Sep_fsoli, Sep_statu
+    SELECT Tpe_nombr, Sep_motiv, Ald_nombr, Sep_calle, Sep_carre, Sep_delug, Sep_finic, Sep_hinic, Sep_ffinl, Sep_hfinl, TIMESTAMPDIFF(MINUTE, CONCAT(Sep_finic, ' ', Sep_hinic), CONCAT(Sep_ffinl, ' ', Sep_hfinl)) AS Sep_durac, Sep_asist, Sep_fsoli, Sep_statu
     FROM Prefttsep
     JOIN Preftmald ON Prefttsep.Sep_aldea = Preftmald.Ald_codig
     JOIN Preftmtpe ON Prefttsep.Sep_tipoe = Preftmtpe.Tpe_codig
@@ -590,13 +590,13 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Tpe_codig, Pep_clien FROM Preftmtpe";
+    					$sql = "SELECT Tpe_codig, Tpe_nombr FROM Preftmtpe";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
         				// Imprimir opciones del select
         				while($row = $result->fetch_assoc()) {
-            				echo "<option value='" . $row["Tpe_codig"] . "'>" . $row["Pep_clien"] . "</option>";
+            				echo "<option value='" . $row["Tpe_codig"] . "'>" . $row["Tpe_nombr"] . "</option>";
         				}
     					} else {
         					echo "<option value=''>No hay aldeas disponibles</option>";
@@ -1647,7 +1647,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </tr>
         <?php while ($row = $result_notificacion_evento->fetch_assoc()): ?>
         <tr>
-            <td><?= $row['Pep_clien'] ?></td>
+            <td><?= $row['Tpe_nombr'] ?></td>
             <td><?= $row['Sep_motiv'] ?></td>
             <td><?= $row['Ald_nombr'] ?></td>
             <td><?= $row['Sep_calle'] ?></td>
