@@ -792,43 +792,42 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
                                 <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
                                 <td><?php echo htmlspecialchars($row['Sep_fsoli']); ?></td>
                                 <td>
-                                <td>
-    <div class="boton_de_estado">
-        <select onchange="updateStatus_2('<?php echo $row['Sep_codig']; ?>', this)" 
-            style="background-color: <?php 
-                switch ($row['Sep_statu']) {
-                    case 'enviada':
-                        echo 'blue';
-                        break;
-                    case 'en_revision':
-                        echo 'orange';
-                        break;
-                    case 'rechazada':
-                        echo 'red';
-                        break;
-                    case 'aprobada_pendiente':
-                        echo 'yellow';
-                        break;
-                    case 'en_revision_pago':
-                        echo 'white'; // Cambiado a blanco
-                        break;
-                    case 'Finalizada':
-                        echo 'green';
-                        break;
-                    default:
-                        echo 'gray';
-                }
-            ?>; color: white;">
-            <option value="enviada" <?php echo $row['Sep_statu'] === 'enviada' ? 'selected' : ''; ?>>Enviada</option>
-            <option value="en_revision" <?php echo $row['Sep_statu'] === 'en_revision' ? 'selected' : ''; ?>>En Revisión</option>
-            <option value="rechazada" <?php echo $row['Sep_statu'] === 'rechazada' ? 'selected' : ''; ?>>Rechazada</option>
-            <option value="aprobada_pendiente" <?php echo $row['Sep_statu'] === 'aprobada_pendiente' ? 'selected' : ''; ?>>Aprobada Pendiente de Pago</option>
-            <option value="en_revision_pago" <?php echo $row['Sep_statu'] === 'en_revision_pago' ? 'selected' : ''; ?>>Pago en Revisión</option>
-            <option value="Finalizada" <?php echo $row['Sep_statu'] === 'Finalizada' ? 'selected' : ''; ?>>Finalizada</option>
-        </select>
-    </div>
-</td>
+                                    <div class="boton_de_estado">
+                                        <select onchange="updateStatus_2('<?php echo $row['Sep_codig']; ?>', this)" 
+                                            style="background-color: <?php 
+                                                switch ($row['Sep_statu']) {
+                                                case 'enviada':
+                                                    echo 'blue';
+                                                    break;
+                                                case 'en_revision':
+                                                    echo 'orange';
+                                                    break;
+                                                case 'rechazada':
+                                                    echo 'red';
+                                                    break;
+                                                case 'aprobada_pendiente':
+                                                    echo 'yellow';
+                                                    break;
+                                                case 'en_revision_pago':
+                                                    echo 'white'; // Cambiado a blanco
+                                                    break;
+                                                case 'Finalizada':
+                                                    echo 'green';
+                                                    break;
+                                                default:
+                                                    echo 'gray';
+                                                }
+                                            ?>; color: white;">
+                                            <option value="enviada" <?php echo $row['Sep_statu'] === 'enviada' ? 'selected' : ''; ?>>Enviada</option>
+                                            <option value="en_revision" <?php echo $row['Sep_statu'] === 'en_revision' ? 'selected' : ''; ?>>En Revisión</option>
+                                            <option value="rechazada" <?php echo $row['Sep_statu'] === 'rechazada' ? 'selected' : ''; ?>>Rechazada</option>
+                                            <option value="aprobada_pendiente" <?php echo $row['Sep_statu'] === 'aprobada_pendiente' ? 'selected' : ''; ?>>Aprobada Pendiente de Pago</option>
+                                            <option value="en_revision_pago" <?php echo $row['Sep_statu'] === 'en_revision_pago' ? 'selected' : ''; ?>>Pago en Revisión</option>
+                                            <option value="Finalizada" <?php echo $row['Sep_statu'] === 'Finalizada' ? 'selected' : ''; ?>>Finalizada</option>
+                                        </select>
+                                    </div>
                                 </td>
+                                
                                 <td>
                                     <button class="btn-editar" onclick='openEditModal(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
                                     <button class="btn-detalles" onclick="openDetailsModal(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
