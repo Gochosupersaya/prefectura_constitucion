@@ -876,6 +876,18 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
     </div>
 </div>
 
+<!-- Modal para Motivo de Rechazo -->
+<div id="modalMotivoRechazo" class="modal_motivo_rechazo">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModalMotivoRechazo()">&times;</span>
+        <h3>Motivo del Rechazo</h3>
+        <textarea id="motivoRechazo" rows="4" placeholder="Escriba el motivo del rechazo"></textarea>
+        <button onclick="confirmarRechazo()" class="btn-confirmar">Aceptar</button>
+    </div>
+</div>
+
+
+
 
 
                     </div>
@@ -2146,11 +2158,27 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
         
     </script>
 
-    <script>
-       function updateConstanciaStatus(sepCodig, estadoSelect, sedebArchivo) {
-    const nuevoEstado = estadoSelect.value;
-    const botonEstado = estadoSelect;
+<script>
+let estadoTemporal = null; // Almacena temporalmente el estado para rechazo
+let selectTemporal = null; // Almacena el select del que proviene la solicitud
 
+function updateConstanciaStatus(sepCodig, estadoSelect, sedebArchivo) {
+    const nuevoEstado = estadoSelect.value;
+
+    // Si se selecciona "Rechazada", abrir el modal para escribir el motivo
+    if (nuevoEstado === "Rechazada") {
+        estadoTemporal = { sepCodig, sedebArchivo };
+        selectTemporal = estadoSelect;
+        abrirModalMotivoRechazo();
+        return; // Detener el cambio de estado hasta que se confirme el motivo
+    }
+
+    // Continuar con el flujo normal para otros estados
+    enviarEstado(sepCodig, nuevoEstado, estadoSelect, sedebArchivo, "");
+}
+
+function enviarEstado(sepCodig, nuevoEstado, estadoSelect, sedebArchivo, motivoRechazo) {
+    const botonEstado = estadoSelect;
 
     // Objeto de colores para mapear estados a colores
     const colores = {
@@ -2165,7 +2193,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "actualizar_constancia_evento.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200 && xhr.responseText.trim() === "success") {
                 // Actualizar color del botón
@@ -2175,7 +2203,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                 const opcionesActualizadas = generarOpcionesEstado(nuevoEstado, sedebArchivo);
                 estadoSelect.innerHTML = opcionesActualizadas;
 
-                // Mantener el modal de confirmación
+                // Mostrar el modal de confirmación
                 mostrarModalConstancia();
             } else {
                 // Manejar error si es necesario
@@ -2183,9 +2211,8 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
             }
         }
     };
-    
-    // Corregir la interpolación de cadenas
-    xhr.send(`Sep_codig=${sepCodig}&Sep_statu=${nuevoEstado}&Sep_sedeb=${sedebArchivo}`);
+
+    xhr.send(`Sep_codig=${sepCodig}&Sep_statu=${nuevoEstado}&Sep_sedeb=${sedebArchivo}&motivo_rechazo=${motivoRechazo}`);
 }
 
 // Función para generar las opciones del select
@@ -2207,7 +2234,7 @@ function generarOpcionesEstado(estadoActual, sedebArchivo) {
     return html;
 }
 
-// Mantener las funciones originales de modal
+// Modal de confirmación
 function mostrarModalConstancia() {
     const modal = document.getElementById("modalConfirmacionConstancia");
     modal.style.display = "block";
@@ -2223,7 +2250,36 @@ function cerrarModalConstancia() {
     modal.style.display = "none";
 }
 
-    </script>
+// Funciones para el modal de motivo de rechazo
+function abrirModalMotivoRechazo() {
+    const modal = document.getElementById("modalMotivoRechazo");
+    modal.style.display = "block";
+}
+
+function cerrarModalMotivoRechazo() {
+    const modal = document.getElementById("modalMotivoRechazo");
+    modal.style.display = "none";
+    estadoTemporal = null;
+    selectTemporal.value = ""; // Resetear el select si se cancela
+}
+
+function confirmarRechazo() {
+    const motivo = document.getElementById("motivoRechazo").value.trim();
+    if (!motivo) {
+        alert("Por favor, escriba un motivo para el rechazo.");
+        return;
+    }
+
+    // Enviar el estado y cerrar el modal de motivo
+    enviarEstado(estadoTemporal.sepCodig, "Rechazada", selectTemporal, estadoTemporal.sedebArchivo, motivo);
+    cerrarModalMotivoRechazo();
+
+    // Mostrar el modal de confirmación
+    mostrarModalConstancia();
+}
+</script>
+
+
 
 		<!-- All Script -->
 		<script src="../assets/js/sesion/jquery.min.js"></script>

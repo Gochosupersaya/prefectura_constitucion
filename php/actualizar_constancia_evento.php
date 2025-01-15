@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sep_codig = $_POST['Sep_codig'];
     $nuevo_estado = $_POST['Sep_statu'];
     $sedeb_archivo = $_POST['Sep_sedeb'];
+    $motivo_rechazo = $_POST['motivo_rechazo'] ?? null;
 
     // Verificar si el nuevo estado es válido
     $query = "SELECT Sep_statu FROM Prefttsep WHERE Sep_codig = ?";
@@ -32,14 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt->bind_param("si", $nuevo_estado, $sep_codig);
             $updateStmt->execute();
 
-            if ($nuevo_estado === 'rechazada') {
-                $motivo_rechazo = $_POST['motivo_rechazo'] ?? 'Motivo no especificado';
+            if ($nuevo_estado === 'Rechazada') {
                 $fecha_rechazo = date('Y-m-d');
                 $rechazoQuery = "UPDATE Prefttsep SET Sep_motir = ?, Sep_frech = ? WHERE Sep_codig = ?";
                 $rechazoStmt = $conexion->prepare($rechazoQuery);
                 $rechazoStmt->bind_param("ssi", $motivo_rechazo, $fecha_rechazo, $sep_codig);
                 $rechazoStmt->execute();
             }
+
             echo "success";
             exit;
         }
@@ -47,3 +48,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 echo "error";
 exit;
+?>
+
