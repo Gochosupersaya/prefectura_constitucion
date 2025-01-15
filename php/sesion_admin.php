@@ -891,7 +891,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
     <div class="modal-content">
         <span class="close" onclick="closeEditModal_3()">&times;</span>
         <h2>Editar Constancia</h2>
-        <form id="editForm_3" method="post" action="actualizar_constancia_evento.php" enctype="multipart/form-data">
+        <form id="editForm_3" method="post" action="constancias/actualizar_constancia_evento_edicion.php" enctype="multipart/form-data">
             <input type="hidden" name="codigo" id="editCodigo_3">
 
             <!-- Mostrar cédula del solicitante -->
@@ -999,6 +999,15 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                 <h5>Posible Asistencia</h5>
                 <input type="number" class="input-field" name="asistencia" id="editAsistencia_3">
             </div>
+
+            <div class="input-box">
+    <h5>Foto del Baucher SEDB</h5>
+    <input type="file" name="sedeb_foto" id="sedeb_foto" accept="image/*" onchange="handleImageUpload(event, 'previewSedeb', 'sedeb_foto')" />
+    <div class="image-preview">
+        <img id="previewSedeb" src="" alt="Vista previa del Baucher SEDB" style="display:none;" />
+    </div>
+</div>
+
 
             <div class="input-box">
                 <input type="submit" class="submit" value="Actualizar">
@@ -1527,12 +1536,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                             </div>
                         </div>
 
-                        <!-- Modal para Fotos -->
-                        <div id="imageModal" class="modal_imagen">
-                            <span class="close" onclick="closeImageModal()">&times;</span>
-                            <img class="modal-content" id="modalImage">
-                            <a id="downloadLink" download="imagen.jpg" class="download-button">Descargar</a>
-                        </div>
+                        
 
                         <!-- Modal de Confirmación -->
                         <div id="modalConfirmacion" class="modal_estado">
@@ -1815,61 +1819,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                             }
                         </script>
 
-                        <!-- para redimensionar la imagen antes de enviarla al servidor. Vamos a usar un canvas para modificar 
-                        la resolución de la imagen y luego convertimos la imagen redimensionada en un archivo Blob, que se puede enviar al servidor.-->
-                        <script>
-                            function handleImageUpload(event, previewId, inputId) {
-                                const file = event.target.files[0];
-                                if (file && file.type.startsWith("image")) {
-                                    const reader = new FileReader();
-                                    reader.onload = function(e) {
-                                        const img = new Image();
-                                        img.onload = function() {
-                                            const canvas = document.createElement("canvas");
-                                            const ctx = canvas.getContext("2d");
-
-                                            // Cambiar tamaño de la imagen (por ejemplo, 500x500 píxeles)
-                                            const MAX_WIDTH = 500;
-                                            const MAX_HEIGHT = 500;
-                                            let width = img.width;
-                                            let height = img.height;
-
-                                            if (width > height) {
-                                                if (width > MAX_WIDTH) {
-                                                    height *= MAX_WIDTH / width;
-                                                    width = MAX_WIDTH;
-                                                }
-                                            } else {
-                                                if (height > MAX_HEIGHT) {
-                                                    width *= MAX_HEIGHT / height;
-                                                    height = MAX_HEIGHT;
-                                                }
-                                            }
-
-                                            canvas.width = width;
-                                            canvas.height = height;
-                                            ctx.drawImage(img, 0, 0, width, height);
-
-                                            // Convertir la imagen redimensionada a Blob y reemplazar el archivo
-                                            canvas.toBlob(function(blob) {
-                                                const newFile = new File([blob], file.name, { type: file.type });
-                                                const dataTransfer = new DataTransfer();
-                                                dataTransfer.items.add(newFile);
-                                                document.getElementById(inputId).files = dataTransfer.files;
-                                                                                                        
-                                                // Vista previa de la imagen
-                                                const previewElement = document.getElementById(previewId);
-                                                previewElement.src = URL.createObjectURL(blob);
-                                                previewElement.style.display = "block";
-                                            }, file.type);
-                                        };
-                                        img.src = e.target.result;
-                                    };
-                                    reader.readAsDataURL(file);
-                                }
-                            }
-
-                        </script>
+                        
 
                         <!-- Para mostrar los detalles de las personas dentro de la parroquia-->
                         <script>
@@ -2023,81 +1973,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 
                         </script>
 
-                        <!-- Para mostrar los detalles de las personas que no tienen usuario-->
-                        <script>
-                            function openDetailsModal_2(user) {
-                                const modal = document.getElementById("detailsModal_2");
-                                const modalContent = document.getElementById("modal-details-content_2");
-
-                                modalContent.innerHTML = `
-                                    <table>
-                                        <tr>
-                                            <th colspan="2">Datos Personales</th>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Cédula:</strong> ${user.Per_cedul}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Nombre(s):</strong> ${user.Per_nombr}</td>
-                                            <td><strong>Apellido(s):</strong>${user.Per_apell}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2">
-                                                <div class="image-container">
-                                                    <div class="image-item">
-                                                        <p><strong>Foto Cédula:</strong></p>
-                                                        <img src="${user.Per_cfoto}" alt="Foto Cédula" class="imagen-tabla" onclick="openImageModal('${user.Per_cfoto}')">
-                                                    </div>
-                                                    <div class="image-item">
-                                                        <p><strong>Foto RIF:</strong></p>
-                                                        <img src="${user.Per_rifpe}" alt="Foto RIF" class="imagen-tabla" onclick="openImageModal('${user.Per_rifpe}')">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Dirección</th>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Aldea:</strong> ${user.Din_aldea}</td>
-                                            <td><strong>Calle:</strong> ${user.Din_calle}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Carrera:</strong> ${user.Din_carre}</td>
-                                            <td><strong>Número de Casa:</strong> ${user.Din_ncasa}</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Información de Contacto</th>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Teléfono:</strong> ${user.Per_telef}</td>
-                                            <td><strong>Correo:</strong> ${user.Usu_corre}</td>
-                                        </tr>
-                                    </table>
-                                `;
-
-                                modal.style.display = "block";
-                            }
-
-                            function closeDetailsModal_2() {
-                                document.getElementById("detailsModal_2").style.display = "none";
-                            }
-
-                            function openImageModal(imageSrc) {
-                                const modal = document.getElementById("imageModal");
-                                const modalImage = document.getElementById("modalImage");
-                                const downloadLink = document.getElementById("downloadLink");
-
-                                modal.style.display = "block";
-                                modalImage.src = imageSrc;
-                                downloadLink.href = imageSrc;
-                            }
-
-                            function closeImageModal() {
-                                document.getElementById("imageModal").style.display = "none";
-                            }
-
-                        </script>
+                        
 			
                     </div>
             	</section>
@@ -2191,6 +2067,12 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 
         
 		
+            <!-- Modal para Fotos -->
+            <div id="imageModal" class="modal_imagen">
+                            <span class="close" onclick="closeImageModal()">&times;</span>
+                            <img class="modal-content" id="modalImage">
+                            <a id="downloadLink" download="imagen.jpg" class="download-button">Descargar</a>
+                        </div>
 
             <!-- Modal de Confirmación -->
             <div id="modalConfirmacionEdicion" class="modal_estado">
@@ -2203,6 +2085,138 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
         <p id="messageBody"></p>
                             </div>
                         </div>
+
+            <!-- Para mostrar los detalles de las personas que no tienen usuario-->
+            <script>
+                            function openDetailsModal_2(user) {
+                                const modal = document.getElementById("detailsModal_2");
+                                const modalContent = document.getElementById("modal-details-content_2");
+
+                                modalContent.innerHTML = `
+                                    <table>
+                                        <tr>
+                                            <th colspan="2">Datos Personales</th>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Cédula:</strong> ${user.Per_cedul}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Nombre(s):</strong> ${user.Per_nombr}</td>
+                                            <td><strong>Apellido(s):</strong>${user.Per_apell}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="image-container">
+                                                    <div class="image-item">
+                                                        <p><strong>Foto Cédula:</strong></p>
+                                                        <img src="${user.Per_cfoto}" alt="Foto Cédula" class="imagen-tabla" onclick="openImageModal('${user.Per_cfoto}')">
+                                                    </div>
+                                                    <div class="image-item">
+                                                        <p><strong>Foto RIF:</strong></p>
+                                                        <img src="${user.Per_rifpe}" alt="Foto RIF" class="imagen-tabla" onclick="openImageModal('${user.Per_rifpe}')">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">Dirección</th>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Aldea:</strong> ${user.Din_aldea}</td>
+                                            <td><strong>Calle:</strong> ${user.Din_calle}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Carrera:</strong> ${user.Din_carre}</td>
+                                            <td><strong>Número de Casa:</strong> ${user.Din_ncasa}</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">Información de Contacto</th>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Teléfono:</strong> ${user.Per_telef}</td>
+                                            <td><strong>Correo:</strong> ${user.Usu_corre}</td>
+                                        </tr>
+                                    </table>
+                                `;
+
+                                modal.style.display = "block";
+                            }
+
+                            function closeDetailsModal_2() {
+                                document.getElementById("detailsModal_2").style.display = "none";
+                            }
+
+                            function openImageModal(imageSrc) {
+                                const modal = document.getElementById("imageModal");
+                                const modalImage = document.getElementById("modalImage");
+                                const downloadLink = document.getElementById("downloadLink");
+
+                                modal.style.display = "block";
+                                modalImage.src = imageSrc;
+                                downloadLink.href = imageSrc;
+                            }
+
+                            function closeImageModal() {
+                                document.getElementById("imageModal").style.display = "none";
+                            }
+
+                        </script>
+
+<!-- para redimensionar la imagen antes de enviarla al servidor. Vamos a usar un canvas para modificar 
+                        la resolución de la imagen y luego convertimos la imagen redimensionada en un archivo Blob, que se puede enviar al servidor.-->
+                        <script>
+                            function handleImageUpload(event, previewId, inputId) {
+                                const file = event.target.files[0];
+                                if (file && file.type.startsWith("image")) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        const img = new Image();
+                                        img.onload = function() {
+                                            const canvas = document.createElement("canvas");
+                                            const ctx = canvas.getContext("2d");
+
+                                            // Cambiar tamaño de la imagen (por ejemplo, 500x500 píxeles)
+                                            const MAX_WIDTH = 500;
+                                            const MAX_HEIGHT = 500;
+                                            let width = img.width;
+                                            let height = img.height;
+
+                                            if (width > height) {
+                                                if (width > MAX_WIDTH) {
+                                                    height *= MAX_WIDTH / width;
+                                                    width = MAX_WIDTH;
+                                                }
+                                            } else {
+                                                if (height > MAX_HEIGHT) {
+                                                    width *= MAX_HEIGHT / height;
+                                                    height = MAX_HEIGHT;
+                                                }
+                                            }
+
+                                            canvas.width = width;
+                                            canvas.height = height;
+                                            ctx.drawImage(img, 0, 0, width, height);
+
+                                            // Convertir la imagen redimensionada a Blob y reemplazar el archivo
+                                            canvas.toBlob(function(blob) {
+                                                const newFile = new File([blob], file.name, { type: file.type });
+                                                const dataTransfer = new DataTransfer();
+                                                dataTransfer.items.add(newFile);
+                                                document.getElementById(inputId).files = dataTransfer.files;
+                                                                                                        
+                                                // Vista previa de la imagen
+                                                const previewElement = document.getElementById(previewId);
+                                                previewElement.src = URL.createObjectURL(blob);
+                                                previewElement.style.display = "block";
+                                            }, file.type);
+                                        };
+                                        img.src = e.target.result;
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            }
+
+                        </script>
 
         <script>
     function openDetailsModal_3(constancia) {
@@ -2253,7 +2267,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                     <div class="image-container">
                         <div class="image-item">
                             <p><strong>Bauché Sedebat:</strong></p>
-                            ${constancia.Sep_sedeb ? `<img src="${constancia.Sep_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal_2('${constancia.Sep_sedeb}')">` : '<p>No disponible</p>'}
+                            ${constancia.Sep_sedeb ? `<img src="${constancia.Sep_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${constancia.Sep_sedeb}')">` : '<p>No disponible</p>'}
                         </div>
                     </div>
                 </td>
@@ -2278,19 +2292,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
             document.getElementById("detailsModal_3").style.display = "none";
         }
 
-        function openImageModal_2(imageSrc) {
-            const modal = document.getElementById("imageModal_2");
-            const modalImage = document.getElementById("modalImage_2");
-            const downloadLink = document.getElementById("downloadLink_2");
-
-            modal.style.display = "block";
-            modalImage.src = imageSrc;
-            downloadLink.href = imageSrc;
-        }
-
-        function closeImageModal_2() {
-            document.getElementById("imageModal_2").style.display = "none";
-        }
+        
 
         
     </script>
@@ -2477,12 +2479,18 @@ document.getElementById('editForm_3').addEventListener('submit', function (event
     })
         .then((response) => response.text())
         .then((data) => {
-            // Mostrar el modal de confirmación con el mensaje de éxito
-            showmodalConfirmacionEdicion('Datos actualizados correctamente');
+    // Mostrar el modal de confirmación con el mensaje de éxito
+    showmodalConfirmacionEdicion('Datos actualizados correctamente');
 
-            // Cerrar automáticamente el modal de edición
-            closeEditModal_3();
-        })
+    // Cerrar automáticamente el modal de edición
+    closeEditModal_3();
+
+    // Esperar 2 segundos antes de recargar la página para que el usuario vea el mensaje de éxito
+    setTimeout(() => {
+        location.reload();  // Recarga la página
+    }, 2000);  // 2000 milisegundos = 2 segundos
+})
+
         .catch((error) => {
             // Mostrar el modal con el mensaje de error
             showmodalConfirmacionEdicion('Hubo un problema al actualizar los datos. Intente nuevamente.');
