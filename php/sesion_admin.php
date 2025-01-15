@@ -824,18 +824,18 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                                 <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
                                 <td><?php echo htmlspecialchars($row['Sep_fsoli']); ?></td>
                                 <td>
-                            <div class="boton_de_estado_constancia">
-                            <select 
-        style="background-color: <?php echo getEstadoColor($row['Sep_statu']); ?>;" 
-        onchange="updateConstanciaStatus('<?php echo $row['Sep_codig']; ?>', this, '<?php echo $row['Sep_sedeb']; ?>')">
-        <?php echo getEstadoOptions($row['Sep_statu'], $row['Sep_sedeb']); ?>
-    </select>
+                                    <div class="boton_de_estado_constancia">
+                                        <select 
+                                        style="background-color: <?php echo getEstadoColor($row['Sep_statu']); ?>;" 
+                                        onchange="updateConstanciaStatus('<?php echo $row['Sep_codig']; ?>', this, '<?php echo $row['Sep_sedeb']; ?>')">
+                                        <?php echo getEstadoOptions($row['Sep_statu'], $row['Sep_sedeb']); ?>
+                                    </select>
 
-                            </div>
-                        </td>
+                                    </div>
+                                </td>
                                 
                                 <td>
-                                    <button class="btn-editar" onclick='openEditModal(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
+                                    <button class="btn-editar" onclick='openEditModal_3(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
                                     <button class="btn-detalles" onclick="openDetailsModal_3(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
                                 </td>
                             </tr>
@@ -850,19 +850,19 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 </div>
 
 <!-- Modal para Detalles -->
-<div id="detailsModal" class="modal_detalle">
+<div id="detailsModal_3" class="modal_detalle">
     <div class="modal-content">
-        <span class="close" onclick="closeDetailsModal()">&times;</span>
+        <span class="close" onclick="closeDetailsModal_3()">&times;</span>
         <h3>Detalles de la Constancia</h3>
-        <div id="modal-details-content" class="modal-scrollable"></div>
+        <div id="modal-details-content_3" class="modal-scrollable"></div>
     </div>
 </div>
 
 <!-- Modal para Fotos -->
-<div id="imageModal" class="modal_imagen">
-    <span class="close" onclick="closeImageModal()">&times;</span>
-    <img class="modal-content" id="modalImage">
-    <a id="downloadLink" download="imagen.jpg" class="download-button">Descargar</a>
+<div id="imageModal_2" class="modal_imagen">
+    <span class="close" onclick="closeImageModal_2()">&times;</span>
+    <img class="modal-content" id="modalImage_2">
+    <a id="downloadLink_2" download="imagen.jpg" class="download-button">Descargar</a>
 </div>
 
 <!-- Modal de Confirmación -->
@@ -885,6 +885,128 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
         <button onclick="confirmarRechazo()" class="btn-confirmar">Aceptar</button>
     </div>
 </div>
+
+<!-- Modal para editar constancia -->
+<div id="editModal_3" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal_3()">&times;</span>
+        <h2>Editar Constancia</h2>
+        <form id="editForm_3" method="post" action="actualizar_constancia_evento.php" enctype="multipart/form-data">
+            <input type="hidden" name="codigo" id="editCodigo_3">
+
+            <!-- Mostrar cédula del solicitante -->
+            <div class="input-box">
+                <label for="displayCedula_3"><h5>Cédula del Solicitante</h5></label>
+                <input type="text" class="input-field" id="displayCedula_3" readonly>
+            </div>
+
+            <!-- Mostrar nombre del solicitante -->
+            <div class="input-box">
+                <label for="displayNombre_3"><h5>Nombre del Solicitante</h5></label>
+                <input type="text" class="input-field" id="displayNombre_3" readonly>
+            </div>
+
+            <!-- Mostrar apellido del solicitante -->
+            <div class="input-box">
+                <label for="displayApellido_3"><h5>Apellido del Solicitante</h5></label>
+                <input type="text" class="input-field" id="displayApellido_3" readonly>
+            </div>
+
+            <div class="input-box">
+                <h5>Tipo de Evento</h5>
+                <select class="input-field" name="tipo_evento" id="editTipoEvento_3">
+                    <?php
+                    include 'conexion.php';
+                    $sql = "SELECT Tpe_codig, Tpe_nombr FROM Preftmtpe";
+                    $result = $conexion->query($sql);
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row["Tpe_codig"] . "'>" . $row["Tpe_nombr"] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>No hay tipos de eventos disponibles</option>";
+                    }
+                    $conexion->close();
+                    ?>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <h5>Motivo</h5>
+                <textarea class="input-field" name="motivo" id="editMotivo_3"></textarea>
+            </div>
+
+            <div class="input-box">
+                <h5>Aldea</h5>
+                <select class="input-field" name="aldea" id="editAldea_3">
+                    <?php
+                    include 'conexion.php';
+                    $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+                    $result = $conexion->query($sql);
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row["Ald_codig"] . "'>" . $row["Ald_nombr"] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>No hay aldeas disponibles</option>";
+                    }
+                    $conexion->close();
+                    ?>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <h5>Calle</h5>
+                <input type="text" class="input-field" name="calle" id="editCalle_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Carrera</h5>
+                <input type="text" class="input-field" name="carrera" id="editCarrera_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Lugar</h5>
+                <input type="text" class="input-field" name="lugar" id="editLugar_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Fecha de Inicio</h5>
+                <input type="date" class="input-field" name="fecha_inicio" id="editFechaInicio_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Hora de Inicio</h5>
+                <input type="time" class="input-field" name="hora_inicio" id="editHoraInicio_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Fecha de Fin</h5>
+                <input type="date" class="input-field" name="fecha_fin" id="editFechaFin_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Hora de Fin</h5>
+                <input type="time" class="input-field" name="hora_fin" id="editHoraFin_3">
+            </div>
+
+            <div class="input-box">
+                <h5>Duración (Minutos)</h5>
+                <input type="number" class="input-field" name="duracion" id="editDuracion_3" readonly>
+            </div>
+
+            <div class="input-box">
+                <h5>Posible Asistencia</h5>
+                <input type="number" class="input-field" name="asistencia" id="editAsistencia_3">
+            </div>
+
+            <div class="input-box">
+                <input type="submit" class="submit" value="Actualizar">
+            </div>
+        </form>
+    </div>
+</div>
+
 
 
 
@@ -1399,7 +1521,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                         <!-- Modal para Detalles de personas sin usuario -->
                         <div id="detailsModal_2" class="modal_detalle">
                             <div class="modal-content">
-                                <span class="close" onclick="closeDetailsModal()">&times;</span>
+                                <span class="close" onclick="closeDetailsModal_2()">&times;</span>
                                 <h3>Detalles de la Persona</h3>
                                 <div id="modal-details-content_2" class="modal-scrollable"></div>
                             </div>
@@ -1957,7 +2079,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                                 modal.style.display = "block";
                             }
 
-                            function closeDetailsModal() {
+                            function closeDetailsModal_2() {
                                 document.getElementById("detailsModal_2").style.display = "none";
                             }
 
@@ -2066,11 +2188,26 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
   		</div>
 		</div>
 		</div>
+
+        
 		
+
+            <!-- Modal de Confirmación -->
+            <div id="modalConfirmacionEdicion" class="modal_estado">
+                            <div class="modal-content">
+                                <span class="close" onclick="closemodalConfirmacionEdicionl()">&times;</span>
+                                <div class="modal-icon">
+                                    <i class='bx bx-check-circle' style="font-size: 40px; color: green;"></i>
+                                </div>
+                                
+        <p id="messageBody"></p>
+                            </div>
+                        </div>
+
         <script>
     function openDetailsModal_3(constancia) {
-    const modal = document.getElementById("detailsModal");
-    const modalContent = document.getElementById("modal-details-content");
+    const modal = document.getElementById("detailsModal_3");
+    const modalContent = document.getElementById("modal-details-content_3");
 
     modalContent.innerHTML = `
         <table>
@@ -2116,7 +2253,7 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                     <div class="image-container">
                         <div class="image-item">
                             <p><strong>Bauché Sedebat:</strong></p>
-                            ${constancia.Sep_sedeb ? `<img src="${constancia.Sep_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${constancia.Sep_sedeb}')">` : '<p>No disponible</p>'}
+                            ${constancia.Sep_sedeb ? `<img src="${constancia.Sep_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal_2('${constancia.Sep_sedeb}')">` : '<p>No disponible</p>'}
                         </div>
                     </div>
                 </td>
@@ -2137,22 +2274,22 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 
     modal.style.display = "block";
 }
-        function closeDetailsModal() {
-            document.getElementById("detailsModal").style.display = "none";
+        function closeDetailsModal_3() {
+            document.getElementById("detailsModal_3").style.display = "none";
         }
 
-        function openImageModal(imageSrc) {
-            const modal = document.getElementById("imageModal");
-            const modalImage = document.getElementById("modalImage");
-            const downloadLink = document.getElementById("downloadLink");
+        function openImageModal_2(imageSrc) {
+            const modal = document.getElementById("imageModal_2");
+            const modalImage = document.getElementById("modalImage_2");
+            const downloadLink = document.getElementById("downloadLink_2");
 
             modal.style.display = "block";
             modalImage.src = imageSrc;
             downloadLink.href = imageSrc;
         }
 
-        function closeImageModal() {
-            document.getElementById("imageModal").style.display = "none";
+        function closeImageModal_2() {
+            document.getElementById("imageModal_2").style.display = "none";
         }
 
         
@@ -2278,6 +2415,103 @@ function confirmarRechazo() {
     mostrarModalConstancia();
 }
 </script>
+
+<script>
+
+function openEditModal_3(constanciaData) {
+    console.log(constanciaData);
+
+    // Mostrar datos del solicitante en campos de solo lectura
+    document.getElementById('displayCedula_3').value = constanciaData.Per_cedul;
+    document.getElementById('displayNombre_3').value = constanciaData.Per_nombr;
+    document.getElementById('displayApellido_3').value = constanciaData.Per_apell;
+
+    // Mostrar datos en campos de edición
+    document.getElementById('editCodigo_3').value = constanciaData.Sep_codig;
+    document.getElementById('editTipoEvento_3').value = constanciaData.Sep_tipoe;
+    document.getElementById('editMotivo_3').value = constanciaData.Sep_motiv;
+    document.getElementById('editAldea_3').value = constanciaData.Sep_aldea;
+    document.getElementById('editCalle_3').value = constanciaData.Sep_calle;
+    document.getElementById('editCarrera_3').value = constanciaData.Sep_carre;
+    document.getElementById('editLugar_3').value = constanciaData.Sep_delug;
+    document.getElementById('editFechaInicio_3').value = constanciaData.Sep_finic;
+    document.getElementById('editHoraInicio_3').value = constanciaData.Sep_hinic;
+    document.getElementById('editFechaFin_3').value = constanciaData.Sep_ffinl;
+    document.getElementById('editHoraFin_3').value = constanciaData.Sep_hfinl;
+    document.getElementById('editDuracion_3').value = calcularDuracion_3(
+        constanciaData.Sep_finic,
+        constanciaData.Sep_hinic,
+        constanciaData.Sep_ffinl,
+        constanciaData.Sep_hfinl
+    );
+    document.getElementById('editAsistencia_3').value = constanciaData.Sep_asist;
+
+    // Mostrar el modal
+    document.getElementById('editModal_3').style.display = 'block';
+}
+
+
+function closeEditModal_3() {
+    document.getElementById('editModal_3').style.display = 'none';
+}
+
+function calcularDuracion_3(fechaInicio, horaInicio, fechaFin, horaFin) {
+    const inicio = new Date(`${fechaInicio}T${horaInicio}`);
+    const fin = new Date(`${fechaFin}T${horaFin}`);
+    return Math.round((fin - inicio) / 60000); // Convertir milisegundos a minutos
+}
+
+
+</script>
+
+<!--Para el modal de confirmacion de edicion -->
+<script>
+document.getElementById('editForm_3').addEventListener('submit', function (event) {
+    event.preventDefault(); // Evita el envío tradicional del formulario
+
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+    })
+        .then((response) => response.text())
+        .then((data) => {
+            // Mostrar el modal de confirmación con el mensaje de éxito
+            showmodalConfirmacionEdicion('Datos actualizados correctamente');
+
+            // Cerrar automáticamente el modal de edición
+            closeEditModal_3();
+        })
+        .catch((error) => {
+            // Mostrar el modal con el mensaje de error
+            showmodalConfirmacionEdicion('Hubo un problema al actualizar los datos. Intente nuevamente.');
+            console.error('Error:', error);
+        });
+});
+
+function showmodalConfirmacionEdicion(message) {
+    const modal = document.getElementById('modalConfirmacionEdicion');
+    document.getElementById('messageBody').textContent = message;
+    modal.style.display = 'block';
+
+    // Cierra automáticamente el modal después de 2 segundos
+    setTimeout(() => {
+        closemodalConfirmacionEdicionl();
+        
+    }, 2000);
+}
+
+function closemodalConfirmacionEdicionl() {
+    document.getElementById('modalConfirmacionEdicion').style.display = 'none';
+}
+
+function closeEditModal_3() {
+    document.getElementById('editModal_3').style.display = 'none';
+}
+
+</script>
+
 
 
 
