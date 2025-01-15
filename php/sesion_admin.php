@@ -2191,7 +2191,7 @@ function enviarEstado(sepCodig, nuevoEstado, estadoSelect, sedebArchivo, motivoR
     };
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "actualizar_constancia_evento.php", true);
+    xhr.open("POST", "constancias/actualizar_constancia_evento.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
