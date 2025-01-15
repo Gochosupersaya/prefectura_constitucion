@@ -523,29 +523,31 @@
 
 /*----------------- fin estilos de las tablas y modal de detalles*--------------------*/
 
-/*----------------- inicio estilos para los estados de las*--------------------*/
-.estado-enviada {
-    background-color: blue;
-    color: white;
+.boton_de_estado_constancia select {
+    background-color: inherit; /* Hereda el color del contenedor */
+    border: none; /* Sin bordes */
+    color: rgb(0, 0, 0); /* Texto blanco */
+    padding: 5px; /* Espaciado interno */
+    font-weight: bold; /* Texto en negrita */
+    width: 250px; /* Ancho fijo para acomodar textos largos */
+    text-align: center; /* Centra el texto */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 14px; /* Tamaño de fuente */
+    overflow: hidden; /* Evita que el texto se desborde */
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  
 }
-.estado-en_revision {
-    background-color: orange;
-    color: white;
+
+.boton_de_estado_constancia select:focus {
+    background-color: #d3d3d3; /* Gris claro */
+    color: black; /* Texto negro para contraste */
+    outline: none; /* Elimina el borde azul predeterminado */
 }
-.estado-rechazada {
-    background-color: red;
-    color: white;
+
+
+.boton_de_estado_constancia {
+    position: relative; /* Asegura que el contenedor actúe como referencia */
+    color: white; /* Texto blanco por defecto */
 }
-.estado-aprobada_pendiente {
-    background-color: yellow;
-    color: black;
-}
-.estado-en_revision_pago {
-    background-color: white;
-    color: black;
-}
-.estado-Finalizada {
-    background-color: green;
-    color: white;
-}
+
 

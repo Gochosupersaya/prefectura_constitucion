@@ -223,6 +223,38 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
 
 ?>
 
+<?php
+function getEstadoColor($estado) {
+    $colores = [
+        'Enviada' => 'blue',
+        'En revision' => 'orange',
+        'Rechazada' => 'red',
+        'Aprobada pendiente de pago' => 'darkgreen',
+        'Pago en revision' => 'lightgreen',
+        'Finalizada' => 'white'
+    ];
+    return $colores[$estado] ?? 'gray';
+}
+
+function getEstadoOptions($estadoActual, $sedebArchivo) {
+    $opciones = [
+        'Enviada' => ['En revision'],
+        'En revision' => ['Rechazada', 'Aprobada pendiente de pago'],
+        'Rechazada' => [],
+        'Aprobada pendiente de pago' => $sedebArchivo ? ['Pago en revision'] : ['Rechazada'],
+        'Pago en revision' => ['Rechazada', 'Finalizada'],
+        'Finalizada' => ['rechazada']
+    ];
+
+    $html = "<option value='$estadoActual' selected>$estadoActual</option>";
+    foreach ($opciones[$estadoActual] as $opcion) {
+        $html .= "<option value='$opcion'>$opcion</option>";
+    }
+    return $html;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
     
@@ -792,45 +824,19 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
                                 <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
                                 <td><?php echo htmlspecialchars($row['Sep_fsoli']); ?></td>
                                 <td>
-                                    <div class="boton_de_estado">
-                                        <select onchange="updateStatus_2('<?php echo $row['Sep_codig']; ?>', this)" 
-                                            style="background-color: <?php 
-                                                switch ($row['Sep_statu']) {
-                                                case 'enviada':
-                                                    echo 'blue';
-                                                    break;
-                                                case 'en_revision':
-                                                    echo 'orange';
-                                                    break;
-                                                case 'rechazada':
-                                                    echo 'red';
-                                                    break;
-                                                case 'aprobada_pendiente':
-                                                    echo 'yellow';
-                                                    break;
-                                                case 'en_revision_pago':
-                                                    echo 'white'; // Cambiado a blanco
-                                                    break;
-                                                case 'Finalizada':
-                                                    echo 'green';
-                                                    break;
-                                                default:
-                                                    echo 'gray';
-                                                }
-                                            ?>; color: white;">
-                                            <option value="enviada" <?php echo $row['Sep_statu'] === 'enviada' ? 'selected' : ''; ?>>Enviada</option>
-                                            <option value="en_revision" <?php echo $row['Sep_statu'] === 'en_revision' ? 'selected' : ''; ?>>En Revisión</option>
-                                            <option value="rechazada" <?php echo $row['Sep_statu'] === 'rechazada' ? 'selected' : ''; ?>>Rechazada</option>
-                                            <option value="aprobada_pendiente" <?php echo $row['Sep_statu'] === 'aprobada_pendiente' ? 'selected' : ''; ?>>Aprobada Pendiente de Pago</option>
-                                            <option value="en_revision_pago" <?php echo $row['Sep_statu'] === 'en_revision_pago' ? 'selected' : ''; ?>>Pago en Revisión</option>
-                                            <option value="Finalizada" <?php echo $row['Sep_statu'] === 'Finalizada' ? 'selected' : ''; ?>>Finalizada</option>
-                                        </select>
-                                    </div>
-                                </td>
+                            <div class="boton_de_estado_constancia">
+                            <select 
+        style="background-color: <?php echo getEstadoColor($row['Sep_statu']); ?>;" 
+        onchange="updateConstanciaStatus('<?php echo $row['Sep_codig']; ?>', this, '<?php echo $row['Sep_sedeb']; ?>')">
+        <?php echo getEstadoOptions($row['Sep_statu'], $row['Sep_sedeb']); ?>
+    </select>
+
+                            </div>
+                        </td>
                                 
                                 <td>
                                     <button class="btn-editar" onclick='openEditModal(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
-                                    <button class="btn-detalles" onclick="openDetailsModal(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
+                                    <button class="btn-detalles" onclick="openDetailsModal_3(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -859,6 +865,16 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
     <a id="downloadLink" download="imagen.jpg" class="download-button">Descargar</a>
 </div>
 
+<!-- Modal de Confirmación -->
+<div id="modalConfirmacionConstancia" class="modal_estado">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModalConstancia()">&times;</span>
+        <div class="modal-icon">
+            <i class='bx bx-check-circle' style="font-size: 40px; color: green;"></i>
+        </div>
+        <p>Estado actualizado correctamente</p>
+    </div>
+</div>
 
 
 
@@ -2040,7 +2056,7 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
 		</div>
 		
         <script>
-    function openDetailsModal(constancia) {
+    function openDetailsModal_3(constancia) {
     const modal = document.getElementById("detailsModal");
     const modalContent = document.getElementById("modal-details-content");
 
@@ -2127,44 +2143,86 @@ $result_constancia_evento = $sql_constancia_evento->get_result();
             document.getElementById("imageModal").style.display = "none";
         }
 
-        function updateStatus_2(codigo, estadoSelect) {
-    const estado = estadoSelect.value;
+        
+    </script>
 
-    // Cambiar el color del select según el estado
-    estadoSelect.style.backgroundColor = getColorByStatus(estado);
+    <script>
+       function updateConstanciaStatus(sepCodig, estadoSelect, sedebArchivo) {
+    const nuevoEstado = estadoSelect.value;
+    const botonEstado = estadoSelect;
+
+
+    // Objeto de colores para mapear estados a colores
+    const colores = {
+        'Enviada': 'blue',
+        'En revision': 'orange',
+        'Rechazada': 'red',
+        'Aprobada pendiente de pago': 'darkgreen',
+        'Pago en revision': 'lightgreen',
+        'Finalizada': 'white'
+    };
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "./constancias/actualizar_constancia_evento.php", true);
+    xhr.open("POST", "actualizar_constancia_evento.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            // Aquí puedes manejar la respuesta del servidor si es necesario
-            console.log(xhr.responseText); // Para depuración
-            // Puedes mostrar un mensaje de éxito o actualizar la interfaz si es necesario
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                // Actualizar color del botón
+                botonEstado.style.backgroundColor = colores[nuevoEstado] || 'gray';
+
+                // Recrear las opciones del select
+                const opcionesActualizadas = generarOpcionesEstado(nuevoEstado, sedebArchivo);
+                estadoSelect.innerHTML = opcionesActualizadas;
+
+                // Mantener el modal de confirmación
+                mostrarModalConstancia();
+            } else {
+                // Manejar error si es necesario
+                console.error('Error al actualizar el estado');
+            }
         }
     };
-    xhr.send("codigo=" + codigo + "&estado=" + estado);
+    
+    // Corregir la interpolación de cadenas
+    xhr.send(`Sep_codig=${sepCodig}&Sep_statu=${nuevoEstado}&Sep_sedeb=${sedebArchivo}`);
 }
 
-// Función para obtener el color según el estado
-function getColorByStatus(estado) {
-    switch (estado) {
-        case 'enviada':
-            return 'blue';
-        case 'en_revision':
-            return 'orange';
-        case 'rechazada':
-            return 'red';
-        case 'aprobada_pendiente':
-            return 'yellow';
-        case 'en_revision_pago':
-            return 'white';
-        case 'Finalizada':
-            return 'green';
-        default:
-            return 'gray';
-    }
+// Función para generar las opciones del select
+function generarOpcionesEstado(estadoActual, sedebArchivo) {
+    const opciones = {
+        'Enviada': ['En revision'],
+        'En revision': ['Rechazada', 'Aprobada pendiente de pago'],
+        'Rechazada': [],
+        'Aprobada pendiente de pago': sedebArchivo ? ['Pago en revision'] : ['Rechazada'],
+        'Pago en revision': ['Rechazada', 'Finalizada'],
+        'Finalizada': ['Rechazada']
+    };
+
+    let html = `<option value="${estadoActual}" selected>${estadoActual}</option>`;
+    (opciones[estadoActual] || []).forEach(opcion => {
+        html += `<option value="${opcion}">${opcion}</option>`;
+    });
+
+    return html;
 }
+
+// Mantener las funciones originales de modal
+function mostrarModalConstancia() {
+    const modal = document.getElementById("modalConfirmacionConstancia");
+    modal.style.display = "block";
+
+    // Cierra automáticamente el modal después de 2 segundos
+    setTimeout(() => {
+        cerrarModalConstancia();
+    }, 2000);
+}
+
+function cerrarModalConstancia() {
+    const modal = document.getElementById("modalConfirmacionConstancia");
+    modal.style.display = "none";
+}
+
     </script>
 
 		<!-- All Script -->
