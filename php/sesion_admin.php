@@ -254,6 +254,32 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 }
 ?>
 
+<?php
+include('conexion.php'); // Archivo de conexión
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['cedula'])) {
+    echo "Debe iniciar sesión para ver las constancias.";
+    exit;
+}
+
+// Consulta para obtener las constancias de desempleo
+$sql_constancia_desempleo = $conexion->prepare("
+    SELECT 
+        p.Per_cedul, p.Per_nombr, p.Per_apell, 
+        s.Sds_codig, s.Sds_motiv, s.Sds_fsoli, s.Sds_femis, s.Sds_frech, s.Sds_motir, 
+        s.Sds_statu, s.Sds_sedeb
+    FROM Prefttsds s
+    JOIN Prefttpds pd ON s.Sds_codig = pd.Pds_desem
+    JOIN Prefttcli c ON pd.Pds_clien = c.Cli_codig
+    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+    WHERE pd.Pds_rolcl = 4
+");
+$sql_constancia_desempleo->execute();
+$result_constancia_desempleo = $sql_constancia_desempleo->get_result();
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -846,6 +872,63 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<div class="container_usuario">
+    <div class="table-container">
+        <button onclick="abrirModalAgregarConstancia()" class="btn-agregar-usuario">Agregar Constancia</button>
+        <h2>Constancias de Desempleo</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cédula del Solicitante</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($result_constancia_desempleo->num_rows > 0): ?>
+                        <?php while ($row = $result_constancia_desempleo->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['Per_cedul']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Per_nombr']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Sds_fsoli']); ?></td>
+                                <td>
+                                    <div class="boton_de_estado_constancia">
+                                        <select 
+                                        style="background-color: <?php echo getEstadoColor($row['Sds_statu']); ?>;" 
+                                        onchange="updateConstanciaStatus_2('<?php echo $row['Sds_codig']; ?>', this, '<?php echo $row['Sds_sedeb']; ?>')">
+                                        <?php echo getEstadoOptions($row['Sds_statu'], $row['Sds_sedeb']); ?>
+                                    </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-editar" onclick='openEditModal_4(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
+                                    <button class="btn-detalles" onclick="openDetailsModal_4(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6">No hay constancias de desempleo registradas.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Detalles -->
+<div id="detailsModal_4" class="modal_detalle">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetailsModal_4()">&times;</span>
+        <h3>Detalles de la Constancia</h3>
+        <div id="modal-details-content_4" class="modal-scrollable"></div>
     </div>
 </div>
 
@@ -2520,6 +2603,80 @@ function closeEditModal_3() {
 
 </script>
 
+<script>
+    function openDetailsModal_4(constancia) {
+        const modal = document.getElementById("detailsModal_4");
+        const modalContent = document.getElementById("modal-details-content_4");
+
+        // Realiza una consulta Ajax para obtener los datos de los testigos
+        fetch(`constancias/get_testigos_desempleo.php?sds_codig=${constancia.Sds_codig}`)
+            .then(response => response.json())
+            .then(testigos => {
+                let testigosHtml = testigos.length > 0 ? testigos.map((testigo, index) => `
+                    <tr>
+                        <th colspan="2">Testigo ${index + 1}</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Cédula:</strong> ${testigo.Per_cedul}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre:</strong> ${testigo.Per_nombr}</td>
+                        <td><strong>Apellido:</strong> ${testigo.Per_apell}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="2">No hay testigos disponibles.</td></tr>';
+
+                // Renderizar detalles con testigos
+                modalContent.innerHTML = `
+                    <table>
+                        <tr>
+                            <th colspan="2">Datos del Solicitante</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Cédula:</strong> ${constancia.Per_cedul}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nombre:</strong> ${constancia.Per_nombr}</td>
+                            <td><strong>Apellido:</strong> ${constancia.Per_apell}</td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Motivo de la Constancia</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">${constancia.Sds_motiv}</td>
+                        </tr>
+                        ${testigosHtml}
+                        <tr>
+                            <td colspan="2">
+                                <div class="image-container">
+                                    <div class="image-item">
+                                        <p><strong>Bauché Sedebat:</strong></p>
+                                        ${constancia.Sds_sedeb ? `<img src="${constancia.Sds_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${constancia.Sds_sedeb}')">` : '<p>No disponible</p>'}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Fechas</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Fecha de Solicitud:</strong> ${constancia.Sds_fsoli || 'No disponible'}</td>
+                            <td><strong>Fecha de Emisión:</strong> ${constancia.Sds_femis || 'No disponible'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fecha de Rechazo:</strong> ${constancia.Sds_frech || 'No disponible'}</td>
+                            <td><strong>Motivo de Rechazo:</strong> ${constancia.Sds_motir || 'No disponible'}</td>
+                        </tr>
+                    </table>
+                `;
+
+                modal.style.display = "block";
+            });
+    }
+
+    function closeDetailsModal_4() {
+        document.getElementById("detailsModal_4").style.display = "none";
+    }
+</script>
 
 
 

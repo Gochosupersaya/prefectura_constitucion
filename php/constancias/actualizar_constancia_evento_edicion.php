@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $asistencia = $_POST['asistencia'];
     $sedeb_foto_path = NULL;
 
-    $carpeta_sedeb = 'imagenes/constancias_sedebat/evento_publico/';
+    $carpeta_sedeb = '../imagenes/constancias_sedebat/evento_publico/';
 
     // Guardar la foto del baucher SEDB
     if (isset($_FILES['sedeb_foto']) && $_FILES['sedeb_foto']['error'] == 0) {
