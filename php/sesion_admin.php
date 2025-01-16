@@ -2169,6 +2169,17 @@ $result_constancia_desempleo = $sql_constancia_desempleo->get_result();
                             </div>
                         </div>
 
+<!-- Modal de Advertencia -->
+<div id="modalAdvertenciaEdicion" class="modal_estado">
+    <div class="modal-content">
+        <span class="close" onclick="closeModalAdvertenciaEdicion()">&times;</span>
+        <div class="modal-icon">
+            <i class='bx bx-error-circle' style="font-size: 40px; color: red;"></i>
+        </div>
+        <p id="advertenciaMensaje"></p>
+    </div>
+</div>
+
             <!-- Para mostrar los detalles de las personas que no tienen usuario-->
             <script>
                             function openDetailsModal_2(user) {
@@ -2502,9 +2513,20 @@ function confirmarRechazo() {
 </script>
 
 <script>
-
 function openEditModal_3(constanciaData) {
-    console.log(constanciaData);
+    // Verificar si el estado es "Finalizada" o "Rechazada"
+    if (constanciaData.Sep_statu === 'Finalizada' || constanciaData.Sep_statu === 'Rechazada') {
+        // Mostrar el modal de advertencia
+        document.getElementById('modalAdvertenciaEdicion').style.display = 'block';
+        document.getElementById('advertenciaMensaje').innerText = 
+            `No se puede editar la constancia porque su estado es "${constanciaData.Sep_statu}".`;
+
+        // Cerrar el modal automáticamente después de 3 segundos
+        setTimeout(() => {
+            document.getElementById('modalAdvertenciaEdicion').style.display = 'none';
+        }, 3000); // 3000 milisegundos = 3 segundos
+        return; // Salir de la función para evitar abrir el modal de edición
+    }
 
     // Mostrar datos del solicitante en campos de solo lectura
     document.getElementById('displayCedula_3').value = constanciaData.Per_cedul;
@@ -2535,7 +2557,6 @@ function openEditModal_3(constanciaData) {
     document.getElementById('editModal_3').style.display = 'block';
 }
 
-
 function closeEditModal_3() {
     document.getElementById('editModal_3').style.display = 'none';
 }
@@ -2546,7 +2567,9 @@ function calcularDuracion_3(fechaInicio, horaInicio, fechaFin, horaFin) {
     return Math.round((fin - inicio) / 60000); // Convertir milisegundos a minutos
 }
 
-
+function closeModalAdvertenciaEdicion() {
+    document.getElementById('modalAdvertenciaEdicion').style.display = 'none';
+}
 </script>
 
 <!--Para el modal de confirmacion de edicion -->

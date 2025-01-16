@@ -17,15 +17,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $asistencia = $_POST['asistencia'];
     $sedeb_foto_path = NULL;
 
-    $carpeta_sedeb = '../imagenes/constancias_sedebat/evento_publico/';
+    // Carpeta relativa para almacenar las imágenes
+    $carpeta_sedeb = 'imagenes/constancias_sedebat/evento_publico/';
 
     // Guardar la foto del baucher SEDB
     if (isset($_FILES['sedeb_foto']) && $_FILES['sedeb_foto']['error'] == 0) {
-        $sedeb_foto_nombre = $carpeta_sedeb . 'sedeb_' . $codigo . '_' . time() . '.jpg';
-        if (move_uploaded_file($_FILES['sedeb_foto']['tmp_name'], $sedeb_foto_nombre)) {
-            $sedeb_foto_path = $sedeb_foto_nombre;
+        // Ruta completa para mover el archivo
+        $ruta_completa = '../' . $carpeta_sedeb . 'sedeb_' . $codigo . '_' . time() . '.jpg';
+        if (move_uploaded_file($_FILES['sedeb_foto']['tmp_name'], $ruta_completa)) {
+            // Guardar solo la ruta relativa
+            $sedeb_foto_path = $carpeta_sedeb . 'sedeb_' . $codigo . '_' . time() . '.jpg';
         }
     }
+
+    // Modificar el estado si se introduce un valor en Sep_sedeb
+    $nuevo_estado = $sedeb_foto_path ? 'Pago en revision' : NULL;
 
     $sql = "UPDATE prefttsep SET 
                 Sep_tipoe = ?, 
@@ -40,15 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 Sep_hfinl = ?, 
                 Sep_durac = ?, 
                 Sep_asist = ?, 
-                Sep_sedeb = ?
+                Sep_sedeb = ?, 
+                Sep_statu = COALESCE(?, Sep_statu)
             WHERE Sep_codig = ?";
 
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param(
-        "sssssssssssssi",
+        "ssssssssssssssi",
         $tipo_evento, $motivo, $aldea, $calle, $carrera, $lugar,
         $fecha_inicio, $hora_inicio, $fecha_fin, $hora_fin,
-        $duracion, $asistencia, $sedeb_foto_path, $codigo
+        $duracion, $asistencia, $sedeb_foto_path, $nuevo_estado, $codigo
     );
 
     if ($stmt->execute()) {
