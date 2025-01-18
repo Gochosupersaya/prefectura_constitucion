@@ -235,17 +235,11 @@
                                 <option value="">Seleccione una aldea</option>
 						
                                 <?php
-    					            // Conexión a la base de datos
-    					            $servername = "localhost";
-    					            $username = "root";
-    					            $password = "";
-    					            $dbname = "Sisbdpref";
-
-    					            $conn = new mysqli($servername, $username, $password, $dbname);
+    					            include('conexion.php');
 
    						            // Consulta para obtener las aldeas
     					            $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
-    					            $result = $conn->query($sql);
+    					            $result = $conexion->query($sql);
 
     					            if ($result->num_rows > 0) {
         				                // Imprimir opciones del select
@@ -257,7 +251,7 @@
     					            }
 
     					            // Cerrar conexión
-    					            $conn->close();
+    					            $conexion->close();
     					        ?>
                             </select>
                         </div>
@@ -281,17 +275,11 @@
                                 <option value="">Seleccione un municipio</option>
 						
                                 <?php
-    					            // Conexión a la base de datos
-    					            $servername = "localhost";
-    					            $username = "root";
-    					            $password = "";
-    					            $dbname = "Sisbdpref";
-
-    					            $conn = new mysqli($servername, $username, $password, $dbname);
+    					            include('conexion.php');
 
    						            // Consulta para obtener los municipios
     					            $sql = "SELECT Mun_codig, Mun_nombr FROM Preftmmun";
-    					            $result = $conn->query($sql);
+    					            $result = $conexion->query($sql);
 
     					            if ($result->num_rows > 0) {
         				            // Imprimir opciones del select
@@ -303,7 +291,7 @@
     					            }
 
     					            // Cerrar conexión
-    					            $conn->close();
+    					            $conexion->close();
     					        ?>
                             </select>
                         </div>

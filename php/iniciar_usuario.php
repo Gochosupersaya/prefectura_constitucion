@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cedula = $_POST['cedula'];
     $contrasena = $_POST['contrasena'];
 
-    $sql = $conexion->prepare("SELECT Usu_cedul, Usu_contr FROM Prefttusu WHERE Usu_cedul = ?");
+    $sql = $conexion->prepare("SELECT Usu_cedul, Usu_contr FROM prefttusu WHERE Usu_cedul = ?");
     $sql->bind_param("i", $cedula);
     $sql->execute();
     $result = $sql->get_result();
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['cedula'] = $cedula;
 
             // Verificar rol y redirigir en función del tipo de usuario
-            $sqlEmpleado = $conexion->prepare("SELECT Emp_rolpe FROM Prefttemp WHERE Emp_cedul = ?");
+            $sqlEmpleado = $conexion->prepare("SELECT Emp_rolpe FROM prefttemp WHERE Emp_cedul = ?");
             $sqlEmpleado->bind_param("i", $cedula);
             $sqlEmpleado->execute();
             $resultEmpleado = $sqlEmpleado->get_result();
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $response = ["status" => "success", "redirect" => "sesion_empleado.php"];
                 }
             } else {
-                $sqlCliente = $conexion->prepare("SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?");
+                $sqlCliente = $conexion->prepare("SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?");
                 $sqlCliente->bind_param("i", $cedula);
                 $sqlCliente->execute();
                 $resultCliente = $sqlCliente->get_result();
