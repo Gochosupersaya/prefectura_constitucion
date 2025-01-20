@@ -1,5 +1,5 @@
 <?php
-include '../conexion.php';
+include '../../conexion.php';
 
 $sds_codig = $_GET['sds_codig'] ?? 0;
 $sql_testigos = $conexion->prepare("

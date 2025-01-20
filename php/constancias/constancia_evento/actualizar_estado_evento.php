@@ -1,5 +1,5 @@
 <?php
-include '../conexion.php';
+include '../../conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sep_codig = $_POST['Sep_codig'];
