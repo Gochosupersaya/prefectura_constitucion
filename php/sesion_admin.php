@@ -255,6 +255,34 @@ function getEstadoOptions($estadoActual, $sedebArchivo) {
 ?>
 
 <?php
+function getEstadoColorSinPago($estado) {
+    $colores = [
+        'Enviada' => 'blue',
+        'En revision' => 'orange',
+        'Rechazada' => 'red',
+        'Finalizada' => 'green'
+    ];
+    return $colores[$estado] ?? 'gray';
+}
+
+function getEstadoOptionsSinPago($estadoActual) {
+    $opciones = [
+        'Enviada' => ['En revision'],
+        'En revision' => ['Rechazada', 'Finalizada'],
+        'Rechazada' => [],
+        'Finalizada' => ['Rechazada']
+    ];
+
+    $html = "<option value='$estadoActual' selected>$estadoActual</option>";
+    foreach ($opciones[$estadoActual] as $opcion) {
+        $html .= "<option value='$opcion'>$opcion</option>";
+    }
+    return $html;
+}
+?>
+
+
+<?php
 include('conexion.php'); // Archivo de conexión
 
 // Verificar si el usuario está logueado
@@ -394,6 +422,52 @@ $sql_permisos_mudanza->execute();
 $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
 
 
+?>
+
+<?php
+include('conexion.php'); // Asegúrate de tener el archivo de conexión correcto
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['cedula'])) {
+    echo "Debe iniciar sesión para ver las constancias.";
+    exit;
+}
+
+// Consulta para obtener las constancias de pobreza
+$sql_constancia_pobreza = $conexion->prepare("
+    SELECT 
+        p.Per_cedul, p.Per_nombr, p.Per_apell, 
+        s.Spo_codig, s.Spo_fsoli, s.Spo_statu, s.Spo_motiv, 
+        s.Spo_femis, s.Spo_frech, s.Spo_motir
+    FROM Prefttspo s
+    JOIN Prefttcli c ON s.Spo_clien = c.Cli_codig
+    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+");
+$sql_constancia_pobreza->execute();
+$result_constancia_pobreza = $sql_constancia_pobreza->get_result();
+?>
+
+<?php
+include('conexion.php'); // Asegúrate de tener el archivo de conexión correcto
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['cedula'])) {
+    echo "Debe iniciar sesión para ver las constancias.";
+    exit;
+}
+
+// Consulta para obtener las constancias de fe de vida
+$sql_constancia_fe_vida = $conexion->prepare("
+    SELECT 
+        p.Per_cedul, p.Per_nombr, p.Per_apell, 
+        f.Sfe_codig, f.Sfe_fsoli, f.Sfe_statu, f.Sfe_motiv, 
+        f.Sfe_femis, f.Sfe_frech, f.Sfe_motir
+    FROM Prefttsfe f
+    JOIN Prefttcli c ON f.Sfe_clien = c.Cli_codig
+    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+");
+$sql_constancia_fe_vida->execute();
+$result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -1181,7 +1255,6 @@ $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
 
 <div class="container_usuario">
     <div class="table-container">
-        <button onclick="abrirModalAgregarPermiso()" class="btn-agregar-usuario">Agregar Permiso</button>
         <h2>Permisos de Mudanza</h2>
         <div class="table-wrapper">
             <table>
@@ -1204,9 +1277,16 @@ $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
                                 <td><?php echo htmlspecialchars($row['solicitante_apellido']); ?></td>
                                 <td><?php echo htmlspecialchars($row['Smd_fsoli']); ?></td>
                                 <td>
-                                    
+                                    <div class="boton_de_estado_constancia">
+                                        <select 
+                                            style="background-color: <?php echo getEstadoColor($row['Smd_statu']); ?>;" 
+                                            onchange="updatePermisoMudanzaStatus('<?php echo $row['Smd_codig']; ?>', this, '<?php echo $row['Smd_sedeb']; ?>')">
+                                            <?php echo getEstadoOptions($row['Smd_statu'], $row['Smd_sedeb']); ?>
+                                        </select>
+                                    </div>
                                 </td>
                                 <td>
+                                    <button class="btn-editar" onclick='openEditModal_(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
                                     <button class="btn-detalles" onclick="openDetailsModalMudanza(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
                                 </td>
                             </tr>
@@ -1216,6 +1296,107 @@ $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="usuario">
+    <div class="container_usuario">
+        <div class="table-container">
+
+            <h2>Constancias de Pobreza</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cédula del Solicitante</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Fecha de Solicitud</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($result_constancia_pobreza->num_rows > 0): ?>
+                            <?php while ($row = $result_constancia_pobreza->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['Per_cedul']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Per_nombr']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Spo_fsoli']); ?></td>
+                                    <td>
+                                        <div class="boton_de_estado_constancia">
+                                            <select 
+                                                style="background-color: <?php echo getEstadoColorSinPago($row['Spo_statu']); ?>;" 
+                                                onchange="updateConstanciaStatusPobreza('<?php echo $row['Spo_codig']; ?>', this)">
+                                                <?php echo getEstadoOptionsSinPago($row['Spo_statu']); ?>
+                                            </select>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <button class="btn-editar" onclick='openEditModal_(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
+                                        <button class="btn-detalles" onclick="openDetailsModalPobreza(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr><td colspan="6">No hay constancias de pobreza registradas.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="usuario">
+    <div class="container_usuario">
+        <div class="table-container">
+
+            <h2>Constancias de Fe de Vida</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cédula del Solicitante</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Fecha de Solicitud</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($result_constancia_fe_vida->num_rows > 0): ?>
+                            <?php while ($row = $result_constancia_fe_vida->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['Per_cedul']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Per_nombr']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Per_apell']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['Sfe_fsoli']); ?></td>
+                                    <td>
+                                        <div class="boton_de_estado_constancia">
+                                            <select 
+                                                style="background-color: <?php echo getEstadoColorSinPago($row['Sfe_statu']); ?>;" 
+                                                onchange="updateConstanciaStatusFeVida('<?php echo $row['Sfe_codig']; ?>', this)">
+                                                <?php echo getEstadoOptionsSinPago($row['Sfe_statu']); ?>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn-editar" onclick='openEditModal_(<?php echo htmlspecialchars(json_encode($row)); ?>)'>Editar</button>
+                                        <button class="btn-detalles" onclick="openDetailsModalFeVida(<?php echo htmlspecialchars(json_encode($row)); ?>)">Detalles</button>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr><td colspan="6">No hay constancias de fe de vida registradas.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -1275,6 +1456,24 @@ $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
         <h3>Detalles del permiso de Mudanza</h3>
         <div id="modal-details-content-mudanza" class="modal-scrollable">
         </div>
+    </div>
+</div>
+
+<!-- Modal para Detalles -->
+<div id="detailsModalPobreza" class="modal_detalle">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetailsModalPobreza()">&times;</span>
+        <h3>Detalles de la Constancia de Pobreza</h3>
+        <div id="modal-details-content-Pobreza" class="modal-scrollable"></div>
+    </div>
+</div>
+
+<!-- Modal para Detalles -->
+<div id="detailsModalFeVida" class="modal_detalle">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetailsModalFeVida()">&times;</span>
+        <h3>Detalles de la Constancia de Fe de Vida</h3>
+        <div id="modal-details-content-FeVida" class="modal-scrollable"></div>
     </div>
 </div>
 
@@ -3002,6 +3201,18 @@ function openDetailsModalMudanza(permiso) {
     const modal = document.getElementById("detailsModalMudanza");
     const modalContent = document.getElementById("modal-details-content-mudanza");
 
+    // Realiza una consulta Ajax para obtener los bienes asociados
+    fetch(`constancias/constancia_mudanza/lista_bienes.php?smd_codig=${permiso.Smd_codig}`)
+        .then(response => response.json())
+        .then(bienes => {
+            let bienesHtml = bienes.length > 0 ? bienes.map((bien, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${bien.nombre_bien}</td>
+                    <td>${bien.cantidad}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="3">No hay bienes disponibles.</td></tr>';
+
     modalContent.innerHTML = `
         <table>
             <tr>
@@ -3060,15 +3271,15 @@ function openDetailsModalMudanza(permiso) {
                 <td><strong>Serial Carrocería:</strong> ${permiso.vehiculo_serial_carroceria || 'No disponible'}</td>
             </tr>
             <tr>
-                        <td colspan="2">
-                            <div class="image-container">
-                                <div class="image-item">
-                                    <p><strong>Bauché Sedebat:</strong></p>
-                                    ${permiso.Smd_sedeb ? `<img src="${permiso.Smd_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${permiso.Smd_sedeb}')">` : '<p>No disponible</p>'}
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                <td colspan="2">
+                    <div class="image-container">
+                        <div class="image-item">
+                            <p><strong>Bauché Sedebat:</strong></p>
+                            ${permiso.Smd_sedeb ? `<img src="${permiso.Smd_sedeb}" alt="Bauché Sedebat" class="imagen-tabla" onclick="openImageModal('${permiso.Smd_sedeb}')">` : '<p>No disponible</p>'}
+                        </div>
+                    </div>
+                </td>
+            </tr>
             <tr>
                 <th colspan="2">Fechas</th>
             </tr>
@@ -3081,9 +3292,21 @@ function openDetailsModalMudanza(permiso) {
                 <td><strong>Motivo de Rechazo:</strong> ${permiso.Smd_motir || 'No disponible'}</td>
             </tr>
         </table>
+        <table class="tabla-bienes">
+            <tr>
+                <th colspan="3">Lista de Bienes</th>
+            </tr>
+            <tr>
+                <th>N°</th>
+                <th>Nombre del Bien</th>
+                <th>Cantidad</th>
+            </tr>
+            ${bienesHtml}
+        </table>
     `;
 
     modal.style.display = "block";
+});
 }
 
 
@@ -3092,7 +3315,97 @@ function closeDetailsModalMudanza() {
 }
 </script>
 
+<script>
+    function openDetailsModalPobreza(constancia) {
+        const modal = document.getElementById("detailsModalPobreza");
+        const modalContent = document.getElementById("modal-details-content-Pobreza");
 
+        modalContent.innerHTML = `
+            <table>
+                <tr>
+                    <th colspan="2">Datos del Solicitante</th>
+                </tr>
+                <tr>
+                    <td><strong>Cédula:</strong> ${constancia.Per_cedul}</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre:</strong> ${constancia.Per_nombr}</td>
+                    <td><strong>Apellido:</strong> ${constancia.Per_apell}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Información de la Constancia</th>
+                </tr>
+                <tr>
+                    <td><strong>Motivo:</strong> ${constancia.Spo_motiv}</td>
+                    <td><strong>Estado:</strong> ${constancia.Spo_statu}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Fechas</th>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Solicitud:</strong> ${constancia.Spo_fsoli ? constancia.Spo_fsoli : 'No disponible'}</td>
+                    <td><strong>Fecha de Emisión:</strong> ${constancia.Spo_femis ? constancia.Spo_femis : 'No disponible'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Rechazo:</strong> ${constancia.Spo_frech ? constancia.Spo_frech : 'No disponible'}</td>
+                    <td><strong>Motivo de Rechazo:</strong> ${constancia.Spo_motir ? constancia.Spo_motir : 'No disponible'}</td>
+                </tr>
+            </table>
+        `;
+
+        modal.style.display = "block";
+    }
+
+    function closeDetailsModalPobreza() {
+        document.getElementById("detailsModalPobreza").style.display = "none";
+    }
+</script>
+
+<script>
+    function openDetailsModalFeVida(constancia) {
+        const modal = document.getElementById("detailsModalFeVida");
+        const modalContent = document.getElementById("modal-details-content-FeVida");
+
+        modalContent.innerHTML = `
+            <table>
+                <tr>
+                    <th colspan="2">Datos del Solicitante</th>
+                </tr>
+                <tr>
+                    <td><strong>Cédula:</strong> ${constancia.Per_cedul}</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre:</strong> ${constancia.Per_nombr}</td>
+                    <td><strong>Apellido:</strong> ${constancia.Per_apell}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Información de la Constancia</th>
+                </tr>
+                <tr>
+                    <td><strong>Motivo:</strong> ${constancia.Sfe_motiv}</td>
+                    <td><strong>Estado:</strong> ${constancia.Sfe_statu}</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Fechas</th>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Solicitud:</strong> ${constancia.Sfe_fsoli ? constancia.Sfe_fsoli : 'No disponible'}</td>
+                    <td><strong>Fecha de Emisión:</strong> ${constancia.Sfe_femis ? constancia.Sfe_femis : 'No disponible'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de Rechazo:</strong> ${constancia.Sfe_frech ? constancia.Sfe_frech : 'No disponible'}</td>
+                    <td><strong>Motivo de Rechazo:</strong> ${constancia.Sfe_motir ? constancia.Sfe_motir : 'No disponible'}</td>
+                </tr>
+            </table>
+        `;
+
+        modal.style.display = "block";
+    }
+
+    function closeDetailsModalFeVida() {
+        document.getElementById("detailsModalFeVida").style.display = "none";
+    }
+</script>
 
 <script>
 let estadoTemporal = null; // Almacena temporalmente el estado para rechazo
@@ -3333,6 +3646,164 @@ function enviarEstadoBuena(sbcCodig, nuevoEstado, estadoSelect, sedebArchivo, mo
 }
 // Fin constancia buena conducta
 
+// inicio permiso de mudanza
+function updatePermisoMudanzaStatus(smdCodig, estadoSelect, sedebArchivo) {
+    const nuevoEstado = estadoSelect.value;
+
+    // Si se selecciona "Rechazada", abrir el modal para escribir el motivo
+    if (nuevoEstado === "Rechazada") {
+        estadoTemporal = { smdCodig, sedebArchivo };
+        selectTemporal = estadoSelect;
+        abrirModalMotivoRechazo();  // Función que debes implementar para obtener el motivo de rechazo
+        return;  // Detener el cambio de estado hasta que se confirme el motivo
+    }
+
+    enviarEstadoMudanza(smdCodig, nuevoEstado, estadoSelect, sedebArchivo, "");
+}
+
+function enviarEstadoMudanza(smdCodig, nuevoEstado, estadoSelect, sedebArchivo, motivoRechazo) {
+    const botonEstado = estadoSelect;
+
+    const colores = {
+        'Enviada': 'blue',
+        'En revision': 'orange',
+        'Rechazada': 'red',
+        'Aprobada pendiente de pago': 'darkgreen',
+        'Pago en revision': 'lightgreen',
+        'Finalizada': 'white'
+    };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "constancias/constancia_mudanza/actualizar_estado_mudanza.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                botonEstado.style.backgroundColor = colores[nuevoEstado] || 'gray';
+                const opcionesActualizadas = generarOpcionesEstado(nuevoEstado, sedebArchivo);  // Esta función debe actualizar las opciones
+                estadoSelect.innerHTML = opcionesActualizadas;
+                mostrarModalConstancia();  // Función para mostrar el modal después de actualizar
+            } else {
+                console.error('Error al actualizar el estado');
+            }
+        }
+    };
+
+    xhr.send(`Smd_codig=${smdCodig}&Smd_statu=${nuevoEstado}&Smd_sedeb=${sedebArchivo}&motivo_rechazo=${motivoRechazo}`);
+}
+
+
+
+// Fin permiso de mudanza
+
+// Inicio constancia de pobreza
+function updateConstanciaStatusPobreza(spoCodig, estadoSelect) {
+    const nuevoEstado = estadoSelect.value;
+
+    // Si se selecciona "Rechazada", abrir el modal para escribir el motivo
+    if (nuevoEstado === "Rechazada") {
+        estadoTemporal = { spoCodig };
+        selectTemporal = estadoSelect;
+        abrirModalMotivoRechazo();
+        return; // Detener el cambio de estado hasta que se confirme el motivo
+    }
+
+    enviarEstadoPobreza(spoCodig, nuevoEstado, estadoSelect, "");
+}
+
+function enviarEstadoPobreza(spoCodig, nuevoEstado, estadoSelect, motivoRechazo) {
+    const botonEstado = estadoSelect;
+
+    const colores = {
+        'Enviada': 'blue',
+        'En revision': 'orange',
+        'Rechazada': 'red',
+        'Finalizada': 'green'
+    };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "constancias/constancia_pobreza/actualizar_estado_pobreza.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                botonEstado.style.backgroundColor = colores[nuevoEstado] || 'gray';
+                const opcionesActualizadas = generarOpcionesEstadoSinPago(nuevoEstado);
+                estadoSelect.innerHTML = opcionesActualizadas;
+                mostrarModalConstancia();
+            } else {
+                console.error('Error al actualizar el estado');
+            }
+        }
+    };
+
+    xhr.send(`Spo_codig=${spoCodig}&Spo_statu=${nuevoEstado}&motivo_rechazo=${motivoRechazo}`);
+}
+
+// Fin constancia de pobreza
+
+// Inicio constancia de fe de vida
+function updateConstanciaStatusFeVida(sfeCodig, estadoSelect) {
+    const nuevoEstado = estadoSelect.value;
+
+    // Si se selecciona "Rechazada", abrir el modal para escribir el motivo
+    if (nuevoEstado === "Rechazada") {
+        estadoTemporal = { sfeCodig };
+        selectTemporal = estadoSelect;
+        abrirModalMotivoRechazo();
+        return; // Detener el cambio de estado hasta que se confirme el motivo
+    }
+
+    enviarEstadoFeVida(sfeCodig, nuevoEstado, estadoSelect, "");
+}
+
+function enviarEstadoFeVida(sfeCodig, nuevoEstado, estadoSelect, motivoRechazo) {
+    const botonEstado = estadoSelect;
+
+    const colores = {
+        'Enviada': 'blue',
+        'En revision': 'orange',
+        'Rechazada': 'red',
+        'Finalizada': 'green'
+    };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "constancias/constancia_fe/actualizar_estado_fe.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200 && xhr.responseText.trim() === "success") {
+                botonEstado.style.backgroundColor = colores[nuevoEstado] || 'gray';
+                const opcionesActualizadas = generarOpcionesEstadoSinPago(nuevoEstado);
+                estadoSelect.innerHTML = opcionesActualizadas;
+                mostrarModalConstancia();
+            } else {
+                console.error('Error al actualizar el estado');
+            }
+        }
+    };
+
+    xhr.send(`Sfe_codig=${sfeCodig}&Sfe_statu=${nuevoEstado}&motivo_rechazo=${motivoRechazo}`);
+}
+// Fin constancia de fe de vida
+
+
+function generarOpcionesEstadoSinPago(estadoActual) {
+    const opciones = {
+        'Enviada': ['En revision'],
+        'En revision': ['Rechazada', 'Finalizada'],
+        'Rechazada': [],
+        'Finalizada': ['Rechazada']
+    };
+
+    let html = `<option value="${estadoActual}" selected>${estadoActual}</option>`;
+    (opciones[estadoActual] || []).forEach(opcion => {
+        html += `<option value="${opcion}">${opcion}</option>`;
+    });
+
+    return html;
+}
+
 // Función para generar las opciones del select
 function generarOpcionesEstado(estadoActual, sedebArchivo) {
     const opciones = {
@@ -3389,7 +3860,10 @@ function confirmarRechazo() {
 
 // Enviar el estado y cerrar el modal de motivo
 if (estadoTemporal) {
-    if (estadoTemporal.sepCodig) {
+    if (estadoTemporal.smdCodig) {
+        // Manejar Permiso de Mudanza
+        enviarEstadoMudanza(estadoTemporal.smdCodig, "Rechazada", selectTemporal, estadoTemporal.sedebArchivo, motivo);
+    } else if (estadoTemporal.sepCodig) {
         // Manejar constancia de Evento
         enviarEstadoEvento(estadoTemporal.sepCodig, "Rechazada", selectTemporal, estadoTemporal.sedebArchivo, motivo);
     } else if (estadoTemporal.sdsCodig) {
@@ -3404,8 +3878,17 @@ if (estadoTemporal) {
     } else if (estadoTemporal.sbcCodig) {
         // Manejar constancia de Buena Conducta
         enviarEstadoBuena(estadoTemporal.sbcCodig, "Rechazada", selectTemporal, estadoTemporal.sedebArchivo, motivo);
+    } else if (estadoTemporal.spoCodig) {
+        // Manejar constancia de Pobreza
+        enviarEstadoPobreza(estadoTemporal.spoCodig, "Rechazada", selectTemporal, motivo);
+    } else if (estadoTemporal.sfeCodig) {
+        // Manejar constancia de Fe de Vida
+        enviarEstadoFeVida(estadoTemporal.sfeCodig, "Rechazada", selectTemporal, motivo);
     }
 }
+
+
+
 
 cerrarModalMotivoRechazo();
 mostrarModalConstancia();

@@ -604,4 +604,49 @@
     background-color: #218838;
 }
 
+/* Estilos especiales para la lista de bienes */
+.tabla-bienes {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.tabla-bienes th,
+.tabla-bienes td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.tabla-bienes th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.tabla-bienes td {
+    background-color: #fafafa;
+    color: #555;
+}
+
+.tabla-bienes tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabla-bienes tr:hover {
+    background-color: #f1f1f1;
+}
+
+.tabla-bienes td:nth-child(1) {
+    width: 5%;
+}
+
+.tabla-bienes td:nth-child(2) {
+    width: 70%;
+}
+
+.tabla-bienes td:nth-child(3) {
+    width: 25%;
+}
 
