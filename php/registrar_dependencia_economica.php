@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 $cedula_usuario = $_SESSION['cedula'];
 
 // Obtener el código del usuario actual de la tabla Prefttcli
-$query = "SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = '$cedula_usuario'";
+$query = "SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = '$cedula_usuario'";
 $result = mysqli_query($conn, $query);
 $row = mysqli_fetch_assoc($result);
 $cedula_actual = $row['Cli_codig'];

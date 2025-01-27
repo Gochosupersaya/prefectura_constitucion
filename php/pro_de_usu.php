@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Verificar si el denunciado ya existe en Preftmper
-        $sql_check_denunciado = $conexion->prepare("SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?");
+        $sql_check_denunciado = $conexion->prepare("SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?");
         $sql_check_denunciado->bind_param("s", $cedula_denunciado);
         $sql_check_denunciado->execute();
         $result_check_denunciado = $sql_check_denunciado->get_result();
@@ -37,12 +37,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codigo_cliente_denunciado = $row_denunciado['Cli_codig'];
         } else {
             // Insertar datos del denunciado en Preftmper
-            $sql_insert_denunciado = $conexion->prepare("INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef) VALUES (?, ?, ?, ?)");
+            $sql_insert_denunciado = $conexion->prepare("INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef) VALUES (?, ?, ?, ?)");
             $sql_insert_denunciado->bind_param("ssss", $cedula_denunciado, $nombre_denunciado, $apellido_denunciado, $telefono_denunciado);
             $sql_insert_denunciado->execute();
 
             // Insertar datos del denunciado en Prefttcli
-            $sql_insert_cliente = $conexion->prepare("INSERT INTO Prefttcli (Cli_cedul) VALUES (?)");
+            $sql_insert_cliente = $conexion->prepare("INSERT INTO prefttcli (Cli_cedul) VALUES (?)");
             $sql_insert_cliente->bind_param("s", $cedula_denunciado);
             $sql_insert_cliente->execute();
 
@@ -50,13 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codigo_cliente_denunciado = $conexion->insert_id;
 
             // Insertar dirección del denunciado en Prefttdii
-            $sql_insert_direccion = $conexion->prepare("INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES (?, ?, ?, ?, ?)");
+            $sql_insert_direccion = $conexion->prepare("INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES (?, ?, ?, ?, ?)");
             $sql_insert_direccion->bind_param("sisss", $cedula_denunciado, $aldea, $calle, $carrera, $num_casa);
             $sql_insert_direccion->execute();
         }
 
         // Verificar si el denunciante ya existe en Prefttcli
-        $sql_check_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?");
+        $sql_check_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?");
         $sql_check_cliente_actual->bind_param("s", $_SESSION['cedula']);
         $sql_check_cliente_actual->execute();
         $result_check_cliente_actual = $sql_check_cliente_actual->get_result();
@@ -66,11 +66,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codigo_cliente_actual = $row_cliente_actual['Cli_codig'];
         } else {
             // Si el cliente no existe, inserta sus datos en Preftmper y Prefttcli
-            $sql_insert_cliente_actual = $conexion->prepare("INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell) VALUES (?, ?, ?)");
+            $sql_insert_cliente_actual = $conexion->prepare("INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell) VALUES (?, ?, ?)");
             $sql_insert_cliente_actual->bind_param("sss", $_SESSION['cedula'], $_SESSION['nombre'], $_SESSION['apellido']);
             $sql_insert_cliente_actual->execute();
 
-            $sql_insert_cliente_actual = $conexion->prepare("INSERT INTO Prefttcli (Cli_cedul) VALUES (?)");
+            $sql_insert_cliente_actual = $conexion->prepare("INSERT INTO prefttcli (Cli_cedul) VALUES (?)");
             $sql_insert_cliente_actual->bind_param("s", $_SESSION['cedula']);
             $sql_insert_cliente_actual->execute();
 
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insertar denuncia en Prefttden
         $den_statu = "Enviada";
-        $sql_insert_denuncia = $conexion->prepare("INSERT INTO Prefttden (Den_tipod, Den_motiv, Den_statu, Den_fecha) VALUES (?, ?, ?, NOW())");
+        $sql_insert_denuncia = $conexion->prepare("INSERT INTO prefttden (Den_tipod, Den_motiv, Den_statu, Den_fecha) VALUES (?, ?, ?, NOW())");
         $sql_insert_denuncia->bind_param("iss", $tipo_denuncia, $descripcion, $den_statu);
         $sql_insert_denuncia->execute();
 
@@ -88,13 +88,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insertar detalles de la denuncia para el denunciante en Prefttdtd
         $rol_denunciante = 1; // Rol 1 para denunciante
-        $sql_insert_detalle_denunciante = $conexion->prepare("INSERT INTO Prefttdtd (Dtd_denun, Dtd_clien, Dtd_rolde) VALUES (?, ?, ?)");
+        $sql_insert_detalle_denunciante = $conexion->prepare("INSERT INTO prefttdtd (Dtd_denun, Dtd_clien, Dtd_rolde) VALUES (?, ?, ?)");
         $sql_insert_detalle_denunciante->bind_param("iii", $codigo_denuncia, $codigo_cliente_actual, $rol_denunciante);
         $sql_insert_detalle_denunciante->execute();
 
         // Insertar detalles de la denuncia para el denunciado en Prefttdtd
         $rol_denunciado = 2; // Rol 2 para denunciado
-        $sql_insert_detalle_denunciado = $conexion->prepare("INSERT INTO Prefttdtd (Dtd_denun, Dtd_clien, Dtd_rolde) VALUES (?, ?, ?)");
+        $sql_insert_detalle_denunciado = $conexion->prepare("INSERT INTO prefttdtd (Dtd_denun, Dtd_clien, Dtd_rolde) VALUES (?, ?, ?)");
         $sql_insert_detalle_denunciado->bind_param("iii", $codigo_denuncia, $codigo_cliente_denunciado, $rol_denunciado);
         $sql_insert_detalle_denunciado->execute();
 

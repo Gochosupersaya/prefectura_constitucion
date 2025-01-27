@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 }
 
 $marcaId = $_GET['marca'];
-$sql = "SELECT Mca_codig, Mca_model FROM Prefttmca WHERE Car_codig = ?";
+$sql = "SELECT Mca_codig, Mca_model FROM prefttmca WHERE Car_codig = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $marcaId);
 $stmt->execute();

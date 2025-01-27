@@ -15,7 +15,7 @@ if (is_uploaded_file($_FILES['imagen']['tmp_name'])) {
     ob_end_clean(); // Limpia el buffer
 
     // Ahora $imagen_convertida contiene los datos JPEG de la imagen, que puedes almacenar en la base de datos
-    $stmt = $conexion->prepare("INSERT INTO Preftmper (Per_cfoto) VALUES (?)");
+    $stmt = $conexion->prepare("INSERT INTO preftmper (Per_cfoto) VALUES (?)");
     $stmt->bind_param("b", $imagen_convertida);
     $stmt->send_long_data(0, $imagen_convertida);
     $stmt->execute();
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ob_end_clean(); // Limpia el buffer
 
         // Guardar la imagen en la base de datos
-        $stmt = $conexion->prepare("INSERT INTO Preftmper (Per_cfoto) VALUES (?)");
+        $stmt = $conexion->prepare("INSERT INTO preftmper (Per_cfoto) VALUES (?)");
         $stmt->bind_param("b", $imagen_convertida);
         $stmt->send_long_data(0, $imagen_convertida);
         

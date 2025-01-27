@@ -11,7 +11,7 @@ if (!isset($_SESSION['cedula'])) {
 $cedula_actual = $_SESSION['cedula'];
 
 // Obtener el código del cliente actual
-$sql_get_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?");
+$sql_get_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?");
 $sql_get_cliente_actual->bind_param("s", $cedula_actual);
 $sql_get_cliente_actual->execute();
 $result_cliente_actual = $sql_get_cliente_actual->get_result();
@@ -33,13 +33,13 @@ if ($result_cliente_actual->num_rows > 0) {
             d.Den_codig, d.Den_tipod, d.Den_motiv, d.Den_fecha, d.Den_statu,
             p.Per_cedul AS cedula_denunciado, p.Per_nombr AS nombre_denunciado, p.Per_apell AS apellido_denunciado, 
             di.Din_aldea, di.Din_calle, di.Din_carre, di.Din_ncasa
-        FROM Prefttden d
-        JOIN Prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
-        JOIN Prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
-        JOIN Prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
-        JOIN Prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
-        JOIN Preftmper p ON c2.Cli_cedul = p.Per_cedul
-        JOIN Prefttdii di ON p.Per_cedul = di.Din_cedul
+        FROM prefttden d
+        JOIN prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
+        JOIN prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
+        JOIN prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
+        JOIN prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
+        JOIN preftmper p ON c2.Cli_cedul = p.Per_cedul
+        JOIN prefttdii di ON p.Per_cedul = di.Din_cedul
         WHERE c1.Cli_codig = ? $estado_condicion
     ");
     if ($estado_seleccionado != 'historial') {
@@ -55,7 +55,7 @@ if ($result_cliente_actual->num_rows > 0) {
 }
 
 function obtenerNombreAldea($codigo_aldea, $conexion) {
-    $sql = $conexion->prepare("SELECT Ald_nombr FROM Preftmald WHERE Ald_codig = ?");
+    $sql = $conexion->prepare("SELECT Ald_nombr FROM preftmald WHERE Ald_codig = ?");
     $sql->bind_param("i", $codigo_aldea);
     $sql->execute();
     $result = $sql->get_result();
@@ -67,7 +67,7 @@ function obtenerNombreAldea($codigo_aldea, $conexion) {
 }
 
 function obtenerTipoDenuncia($codigo_denuncia, $conexion) {
-    $sql = $conexion->prepare("SELECT Tdn_nombr FROM Preftmtdn WHERE Tdn_codig = ?");
+    $sql = $conexion->prepare("SELECT Tdn_nombr FROM preftmtdn WHERE Tdn_codig = ?");
     $sql->bind_param("i", $codigo_denuncia);
     $sql->execute();
     $result = $sql->get_result();
@@ -103,7 +103,7 @@ if (!isset($_SESSION['cedula'])) {
 $cedula_actual = $_SESSION['cedula'];
 
 // Obtener el código del cliente actual
-$sql_get_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?");
+$sql_get_cliente_actual = $conexion->prepare("SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?");
 $sql_get_cliente_actual->bind_param("s", $cedula_actual);
 $sql_get_cliente_actual->execute();
 $result_cliente_actual = $sql_get_cliente_actual->get_result();
@@ -116,12 +116,12 @@ if ($result_cliente_actual->num_rows > 0) {
     $sql_citaciones = $conexion->prepare("
         SELECT 
             d.Den_tipod, d.Den_motiv, c.Cit_fecha, c.Cit_horad
-        FROM Prefttcit c
-        JOIN Prefttdtd dt ON c.Cit_perde = dt.Dtd_codig
-        JOIN Prefttden d ON dt.Dtd_denun = d.Den_codig
+        FROM prefttcit c
+        JOIN prefttdtd dt ON c.Cit_perde = dt.Dtd_codig
+        JOIN prefttden d ON dt.Dtd_denun = d.Den_codig
         WHERE d.Den_codig IN (
             SELECT Dtd_denun 
-            FROM Prefttdtd 
+            FROM prefttdtd 
             WHERE Dtd_clien = ?
         ) AND c.Cit_statu = 'pendiente'
     ");
@@ -158,9 +158,9 @@ $cliente_actual = $result_cliente_actual->fetch_assoc()['Cli_codig'];
 // Notificación de Evento Público
 $sql_notificacion_evento = $conexion->prepare("
     SELECT Tpe_nombr, Sep_motiv, Ald_nombr, Sep_calle, Sep_carre, Sep_delug, Sep_finic, Sep_hinic, Sep_ffinl, Sep_hfinl, TIMESTAMPDIFF(MINUTE, CONCAT(Sep_finic, ' ', Sep_hinic), CONCAT(Sep_ffinl, ' ', Sep_hfinl)) AS Sep_durac, Sep_asist, Sep_fsoli, Sep_statu
-    FROM Prefttsep
-    JOIN Preftmald ON Prefttsep.Sep_aldea = Preftmald.Ald_codig
-    JOIN Preftmtpe ON Prefttsep.Sep_tipoe = Preftmtpe.Tpe_codig
+    FROM prefttsep
+    JOIN preftmald ON prefttsep.Sep_aldea = preftmald.Ald_codig
+    JOIN preftmtpe ON prefttsep.Sep_tipoe = preftmtpe.Tpe_codig
     WHERE Sep_clien = ?
 ");
 $sql_notificacion_evento->bind_param("i", $cliente_actual);
@@ -171,7 +171,7 @@ $result_notificacion_evento = $sql_notificacion_evento->get_result();
 // Constancia de Pobreza
 $sql_constancia_pobreza = $conexion->prepare("
     SELECT Spo_motiv, Spo_fsoli, Spo_statu
-    FROM Prefttspo
+    FROM prefttspo
     WHERE Spo_clien = ?
 ");
 $sql_constancia_pobreza->bind_param("i", $cliente_actual);
@@ -181,7 +181,7 @@ $result_constancia_pobreza = $sql_constancia_pobreza->get_result();
 // Constancia de Fe de Vida
 $sql_constancia_fe_de_vida = $conexion->prepare("
     SELECT Sfe_motiv, Sfe_fsoli, Sfe_statu
-    FROM Prefttsfe
+    FROM prefttsfe
     WHERE Sfe_clien = ?
 ");
 $sql_constancia_fe_de_vida->bind_param("i", $cliente_actual);
@@ -471,7 +471,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -522,7 +522,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     				}
 
     				// Consulta para obtener los tipos de denuncia
-    				$sql = "SELECT Tdn_codig, Tdn_nombr FROM Preftmtdn";
+    				$sql = "SELECT Tdn_codig, Tdn_nombr FROM preftmtdn";
     				$result = $conn->query($sql);
 
     				if ($result->num_rows > 0) {
@@ -590,7 +590,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Tpe_codig, Tpe_nombr FROM Preftmtpe";
+    					$sql = "SELECT Tpe_codig, Tpe_nombr FROM preftmtpe";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -622,7 +622,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -709,7 +709,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -768,7 +768,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -838,7 +838,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -897,7 +897,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -956,7 +956,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1035,7 +1035,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1094,7 +1094,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1153,7 +1153,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1208,7 +1208,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1248,7 +1248,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Mun_codig, Mun_nombr FROM Preftmmun";
+    					$sql = "SELECT Mun_codig, Mun_nombr FROM preftmmun";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1284,7 +1284,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Car_codig, Car_marca FROM Preftmcar";
+    					$sql = "SELECT Car_codig, Car_marca FROM preftmcar";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1313,7 +1313,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Mca_codig, Mca_model FROM Prefttmca";
+    					$sql = "SELECT Mca_codig, Mca_model FROM prefttmca";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1380,7 +1380,7 @@ $result_constancia_fe_de_vida = $sql_constancia_fe_de_vida->get_result();
                     $conn = new mysqli($servername, $username, $password, $dbname);
 
                     // Consulta para obtener los nombres de bienes
-                    $sql = "SELECT Bie_codig, Bie_nombr FROM Preftmbie";
+                    $sql = "SELECT Bie_codig, Bie_nombr FROM preftmbie";
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {
@@ -1510,7 +1510,7 @@ document.addEventListener('DOMContentLoaded', function() {
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {
@@ -1569,7 +1569,7 @@ document.addEventListener('DOMContentLoaded', function() {
     					$conn = new mysqli($servername, $username, $password, $dbname);
 
    						// Consulta para obtener las aldeas
-    					$sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					$sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					$result = $conn->query($sql);
 
     					if ($result->num_rows > 0) {

@@ -16,7 +16,7 @@ session_start();
 
 // Obtener el código del usuario actual
 $user_cedula = $_SESSION['cedula'];
-$sql = "SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = ?";
+$sql = "SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_cedula);
 $stmt->execute();
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $testigo2_casa = $_POST["testigo2-casa"];
 
     // Insertar en la tabla prefttsas
-    $sql = "INSERT INTO Prefttsas (Sas_motiv, Sas_statu) VALUES (?, 'Enviada')";
+    $sql = "INSERT INTO prefttsas (Sas_motiv, Sas_statu) VALUES (?, 'Enviada')";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $motivo);
     $stmt->execute();
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Guardar datos de la persona difunta en preftmper
-    $sql = "INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
+    $sql = "INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
             VALUES (?, ?, ?, '', ?, ?)
             ON DUPLICATE KEY UPDATE
                 Per_nombr = VALUES(Per_nombr),
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Asociar la cédula de la persona difunta a su dirección en prefttdii
-    $sql = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa)
+    $sql = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa)
             VALUES (?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 Din_aldea = VALUES(Din_aldea),
@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Asociar la cédula de la persona difunta a la tabla prefttcli
-    $sql = "INSERT INTO Prefttcli (Cli_cedul) VALUES (?) ON DUPLICATE KEY UPDATE Cli_cedul = VALUES(Cli_cedul)";
+    $sql = "INSERT INTO prefttcli (Cli_cedul) VALUES (?) ON DUPLICATE KEY UPDATE Cli_cedul = VALUES(Cli_cedul)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $difunto_cedula);
     $stmt->execute();
@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Insertar en prefttpdi los datos adicionales de la persona difunta
-    $sql = "INSERT INTO Prefttpdi (Pdi_clien, Pdi_asien, Pdi_ffall, Pdi_hfall, Pdi_nacta, Pdi_fotoa)
+    $sql = "INSERT INTO prefttpdi (Pdi_clien, Pdi_asien, Pdi_ffall, Pdi_hfall, Pdi_nacta, Pdi_fotoa)
             VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iissss", $difunto_cli_codig, $sas_codig, $difunto_fecha_fallecimiento, $difunto_hora_fallecimiento, $difunto_acta_defuncion_numero, $difunto_acta_defuncion_foto);
@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Función para insertar datos del testigo en preftmper, prefttdii, prefttcli y prefttpas
     function insertar_testigo($conn, $sas_codig, $cedula, $nombre, $apellido, $telefono, $foto_cedula, $foto_rif, $aldea, $calle, $carrera, $casa, $rolcl) {
-        $sql = "INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
+        $sql = "INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
                 VALUES (?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     Per_nombr = VALUES(Per_nombr),
@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // Asociar la cédula del testigo a su dirección en prefttdii
-        $sql = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa)
+        $sql = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa)
                 VALUES (?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     Din_aldea = VALUES(Din_aldea),
@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // Asociar la cédula del testigo a la tabla prefttcli
-        $sql = "INSERT INTO Prefttcli (Cli_cedul) VALUES (?) ON DUPLICATE KEY UPDATE Cli_cedul = VALUES(Cli_cedul)";
+        $sql = "INSERT INTO prefttcli (Cli_cedul) VALUES (?) ON DUPLICATE KEY UPDATE Cli_cedul = VALUES(Cli_cedul)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $cedula);
         $stmt->execute();
@@ -154,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // Insertar en prefttpas los datos del testigo
-        $sql = "INSERT INTO Prefttpas (Pas_clien, Pas_asien, Pas_rolcl) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO prefttpas (Pas_clien, Pas_asien, Pas_rolcl) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iii", $cli_codig, $sas_codig, $rolcl);
         $stmt->execute();
@@ -168,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     insertar_testigo($conn, $sas_codig, $testigo2_cedula, $testigo2_nombre, $testigo2_apellido, $testigo2_telefono, $testigo2_foto_cedula, $testigo2_foto_rif, $testigo2_aldea, $testigo2_calle, $testigo2_carrera, $testigo2_casa, 3);
 
     // Insertar datos del usuario actual en prefttpas
-    $sql = "INSERT INTO Prefttpas (Pas_clien, Pas_asien, Pas_rolcl) VALUES (?, ?, 8)";
+    $sql = "INSERT INTO prefttpas (Pas_clien, Pas_asien, Pas_rolcl) VALUES (?, ?, 8)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $cli_codig, $sas_codig);
     $stmt->execute();

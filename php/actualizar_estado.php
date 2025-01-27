@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" || $_SERVER["REQUEST_METHOD"] == "GET")
     // Validar y sanitizar los valores
     if (isset($denuncia_id) && isset($nuevo_estado)) {
         // Actualizar el estado de la denuncia
-        $sql_update_estado = $conexion->prepare("UPDATE Prefttden SET Den_statu = ? WHERE Den_codig = ?");
+        $sql_update_estado = $conexion->prepare("UPDATE prefttden SET Den_statu = ? WHERE Den_codig = ?");
         $sql_update_estado->bind_param("si", $nuevo_estado, $denuncia_id);
 
         if ($sql_update_estado->execute()) {

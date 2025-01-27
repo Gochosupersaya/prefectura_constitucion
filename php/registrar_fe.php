@@ -17,8 +17,8 @@ $current_user_cedula = $_SESSION['cedula'];
 
 // Obtener el código del usuario actual
 $sql = "SELECT cli.Cli_codig 
-        FROM Prefttcli cli 
-        JOIN Preftmper per ON cli.Cli_cedul = per.Per_cedul 
+        FROM prefttcli cli 
+        JOIN preftmper per ON cli.Cli_cedul = per.Per_cedul 
         WHERE per.Per_cedul = '$current_user_cedula'";
 $result = $conn->query($sql);
 $current_user_codigo = $result->fetch_assoc()['Cli_codig'];
@@ -27,7 +27,7 @@ $current_user_codigo = $result->fetch_assoc()['Cli_codig'];
 $motivo = $_POST['fe-de-vida'];
 
 // Insertar datos en prefttsfe
-$sql = "INSERT INTO Prefttsfe (Sfe_clien, Sfe_motiv, Sfe_statu) 
+$sql = "INSERT INTO prefttsfe (Sfe_clien, Sfe_motiv, Sfe_statu) 
         VALUES ('$current_user_codigo', '$motivo', 'Enviada')";
 if ($conn->query($sql) === TRUE) {
     echo "Constancia Fe de Vida enviada correctamente.";

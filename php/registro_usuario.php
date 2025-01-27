@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
 
     // Verificar si el usuario ya existe
-    $sql = "SELECT * FROM Preftmper WHERE Per_cedul = '$cedula'";
+    $sql = "SELECT * FROM preftmper WHERE Per_cedul = '$cedula'";
     $result = $conexion->query($sql);
 
     if ($result->num_rows > 0) {
@@ -43,13 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
         // Insertar el nuevo usuario en la tabla de personas
-        $sql = "INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe) VALUES ('$cedula', '$nombre', '$apellido', '$telefono', '$cfoto_path', '$rfoto_path')";
+        $sql = "INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe) VALUES ('$cedula', '$nombre', '$apellido', '$telefono', '$cfoto_path', '$rfoto_path')";
         if ($conexion->query($sql) === TRUE) {
             // Insertar el nuevo usuario en la tabla de usuarios
-            $sql = "INSERT INTO Prefttusu (Usu_cedul, Usu_corre, Usu_contr) VALUES ('$cedula', '$correo', '$contrasena')";
+            $sql = "INSERT INTO prefttusu (Usu_cedul, Usu_corre, Usu_contr) VALUES ('$cedula', '$correo', '$contrasena')";
             if ($conexion->query($sql) === TRUE) {
                 // Insertar el nuevo usuario en la tabla de clientes
-                $sql = "INSERT INTO Prefttcli (Cli_cedul) VALUES ('$cedula')";
+                $sql = "INSERT INTO prefttcli (Cli_cedul) VALUES ('$cedula')";
                 if ($conexion->query($sql) === TRUE) {
                     // Insertar la dirección según la residencia
                     if ($residencia == 'constitucion') {
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $calle = $_POST['calle1'];
                         $carre = $_POST['carre1'];
                         $ncasa = $_POST['ncasa1'];
-                        $sql = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle', '$carre', '$ncasa')";
+                        $sql = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle', '$carre', '$ncasa')";
                     } else {
                         // Municipio y otros datos necesarios para insertar en la tabla de direcciones para residentes fuera de la parroquia
                         if (isset($_POST['municipio']) && isset($_POST['calle']) && isset($_POST['carre']) && isset($_POST['ncasa'])) {
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $calle = $_POST['calle'];
                             $carre = $_POST['carre'];
                             $ncasa = $_POST['ncasa'];
-                            $sql = "INSERT INTO Prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
+                            $sql = "INSERT INTO prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
                         } else {
                             echo "Error: Faltan datos necesarios para la dirección.";
                             exit;

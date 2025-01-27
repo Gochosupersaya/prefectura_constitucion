@@ -14,11 +14,11 @@ $sql_denuncias = $conexion->prepare("
         d.Den_codig, d.Den_tipod, d.Den_motiv, d.Den_fecha, d.Den_statu,
         c1.Cli_cedul AS cedula_denunciante,
         c2.Cli_cedul AS cedula_denunciado
-    FROM Prefttden d
-    JOIN Prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
-    JOIN Prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
-    JOIN Prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
-    JOIN Prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
+    FROM prefttden d
+    JOIN prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
+    JOIN prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
+    JOIN prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
+    JOIN prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
 ");
 $sql_denuncias->execute();
 $result_denuncias = $sql_denuncias->get_result();
@@ -35,7 +35,7 @@ $estados = [
 
 // Función para obtener el tipo de denuncia a partir de su código
 function obtenerTipoDenuncia($codigo_tipo_denuncia, $conexion) {
-    $sql = $conexion->prepare("SELECT Tdn_nombr FROM Preftmtdn WHERE Tdn_codig = ?");
+    $sql = $conexion->prepare("SELECT Tdn_nombr FROM preftmtdn WHERE Tdn_codig = ?");
     $sql->bind_param("i", $codigo_tipo_denuncia);
     $sql->execute();
     $result = $sql->get_result();
@@ -67,21 +67,21 @@ $sql_denuncias_revision = $conexion->prepare("
         a1.Ald_nombr AS aldea_denunciante, d1.Din_calle AS calle_denunciante, d1.Din_carre AS carrera_denunciante, d1.Din_ncasa AS casa_denunciante,
         p2.Per_cedul AS cedula_denunciado, p2.Per_nombr AS nombre_denunciado, p2.Per_apell AS apellido_denunciado, p2.Per_telef AS telefono_denunciado,
         a2.Ald_nombr AS aldea_denunciado, d2.Din_calle AS calle_denunciado, d2.Din_carre AS carrera_denunciado, d2.Din_ncasa AS casa_denunciado
-    FROM Prefttden d
-    JOIN Prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
-    JOIN Prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
-    JOIN Preftmper p1 ON c1.Cli_cedul = p1.Per_cedul
-    LEFT JOIN Prefttdii d1 ON p1.Per_cedul = d1.Din_cedul
-    LEFT JOIN Preftmald a1 ON d1.Din_aldea = a1.Ald_codig
-    LEFT JOIN Prefttdie de1 ON p1.Per_cedul = de1.Die_cedul
-    LEFT JOIN Preftmmun m1 ON de1.Die_munic = m1.Mun_codig
-    JOIN Prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
-    JOIN Prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
-    JOIN Preftmper p2 ON c2.Cli_cedul = p2.Per_cedul
-    LEFT JOIN Prefttdii d2 ON p2.Per_cedul = d2.Din_cedul
-    LEFT JOIN Preftmald a2 ON d2.Din_aldea = a2.Ald_codig
-    LEFT JOIN Prefttdie de2 ON p2.Per_cedul = de2.Die_cedul
-    LEFT JOIN Preftmmun m2 ON de2.Die_munic = m2.Mun_codig
+    FROM prefttden d
+    JOIN prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
+    JOIN prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
+    JOIN preftmper p1 ON c1.Cli_cedul = p1.Per_cedul
+    LEFT JOIN prefttdii d1 ON p1.Per_cedul = d1.Din_cedul
+    LEFT JOIN preftmald a1 ON d1.Din_aldea = a1.Ald_codig
+    LEFT JOIN prefttdie de1 ON p1.Per_cedul = de1.Die_cedul
+    LEFT JOIN preftmmun m1 ON de1.Die_munic = m1.Mun_codig
+    JOIN prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
+    JOIN prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
+    JOIN preftmper p2 ON c2.Cli_cedul = p2.Per_cedul
+    LEFT JOIN prefttdii d2 ON p2.Per_cedul = d2.Din_cedul
+    LEFT JOIN preftmald a2 ON d2.Din_aldea = a2.Ald_codig
+    LEFT JOIN prefttdie de2 ON p2.Per_cedul = de2.Die_cedul
+    LEFT JOIN preftmmun m2 ON de2.Die_munic = m2.Mun_codig
     WHERE d.Den_statu = 'en_revision'
 ");
 $sql_denuncias_revision->execute();
@@ -109,21 +109,21 @@ $sql_denuncias_aprobadas = $conexion->prepare("
         a1.Ald_nombr AS aldea_denunciante, d1.Din_calle AS calle_denunciante, d1.Din_carre AS carrera_denunciante, d1.Din_ncasa AS casa_denunciante,
         p2.Per_cedul AS cedula_denunciado, p2.Per_nombr AS nombre_denunciado, p2.Per_apell AS apellido_denunciado, p2.Per_telef AS telefono_denunciado,
         a2.Ald_nombr AS aldea_denunciado, d2.Din_calle AS calle_denunciado, d2.Din_carre AS carrera_denunciado, d2.Din_ncasa AS casa_denunciado
-    FROM Prefttden d
-    JOIN Prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
-    JOIN Prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
-    JOIN Preftmper p1 ON c1.Cli_cedul = p1.Per_cedul
-    LEFT JOIN Prefttdii d1 ON p1.Per_cedul = d1.Din_cedul
-    LEFT JOIN Preftmald a1 ON d1.Din_aldea = a1.Ald_codig
-    LEFT JOIN Prefttdie de1 ON p1.Per_cedul = de1.Die_cedul
-    LEFT JOIN Preftmmun m1 ON de1.Die_munic = m1.Mun_codig
-    JOIN Prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
-    JOIN Prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
-    JOIN Preftmper p2 ON c2.Cli_cedul = p2.Per_cedul
-    LEFT JOIN Prefttdii d2 ON p2.Per_cedul = d2.Din_cedul
-    LEFT JOIN Preftmald a2 ON d2.Din_aldea = a2.Ald_codig
-    LEFT JOIN Prefttdie de2 ON p2.Per_cedul = de2.Die_cedul
-    LEFT JOIN Preftmmun m2 ON de2.Die_munic = m2.Mun_codig
+    FROM prefttden d
+    JOIN prefttdtd dt1 ON d.Den_codig = dt1.Dtd_denun AND dt1.Dtd_rolde = 1
+    JOIN prefttcli c1 ON dt1.Dtd_clien = c1.Cli_codig
+    JOIN preftmper p1 ON c1.Cli_cedul = p1.Per_cedul
+    LEFT JOIN prefttdii d1 ON p1.Per_cedul = d1.Din_cedul
+    LEFT JOIN preftmald a1 ON d1.Din_aldea = a1.Ald_codig
+    LEFT JOIN prefttdie de1 ON p1.Per_cedul = de1.Die_cedul
+    LEFT JOIN preftmmun m1 ON de1.Die_munic = m1.Mun_codig
+    JOIN prefttdtd dt2 ON d.Den_codig = dt2.Dtd_denun AND dt2.Dtd_rolde = 2
+    JOIN prefttcli c2 ON dt2.Dtd_clien = c2.Cli_codig
+    JOIN preftmper p2 ON c2.Cli_cedul = p2.Per_cedul
+    LEFT JOIN prefttdii d2 ON p2.Per_cedul = d2.Din_cedul
+    LEFT JOIN preftmald a2 ON d2.Din_aldea = a2.Ald_codig
+    LEFT JOIN prefttdie de2 ON p2.Per_cedul = de2.Die_cedul
+    LEFT JOIN preftmmun m2 ON de2.Die_munic = m2.Mun_codig
     WHERE d.Den_statu = 'aprobada'
 ");
 $sql_denuncias_aprobadas->execute();
@@ -146,9 +146,9 @@ $sql_interior = $conexion->prepare("
         p.Per_cedul, p.Per_nombr, p.Per_apell, p.Per_telef, p.Per_cfoto, p.Per_rifpe,
         d.Din_aldea, d.Din_calle, d.Din_carre, d.Din_ncasa,
         u.Usu_corre, u.Usu_contr, u.Usu_statu
-    FROM Preftmper p
-    JOIN Prefttdii d ON p.Per_cedul = d.Din_cedul
-    JOIN Prefttusu u ON p.Per_cedul = u.Usu_cedul
+    FROM preftmper p
+    JOIN prefttdii d ON p.Per_cedul = d.Din_cedul
+    JOIN prefttusu u ON p.Per_cedul = u.Usu_cedul
 ");
 $sql_interior->execute();
 $result_interior = $sql_interior->get_result();
@@ -159,9 +159,9 @@ $sql_exterior = $conexion->prepare("
         p.Per_cedul, p.Per_nombr, p.Per_apell, p.Per_telef, p.Per_cfoto, p.Per_rifpe,
         e.Die_munic, e.Die_calle, e.Die_carre, e.Die_ncasa,
         u.Usu_corre, u.Usu_contr, u.Usu_statu
-    FROM Preftmper p
-    JOIN Prefttdie e ON p.Per_cedul = e.Die_cedul
-    JOIN Prefttusu u ON p.Per_cedul = u.Usu_cedul
+    FROM preftmper p
+    JOIN prefttdie e ON p.Per_cedul = e.Die_cedul
+    JOIN prefttusu u ON p.Per_cedul = u.Usu_cedul
 ");
 $sql_exterior->execute();
 $result_exterior = $sql_exterior->get_result();
@@ -184,9 +184,9 @@ $sql_sin_usuario = $conexion->prepare("
     SELECT 
         p.Per_cedul, p.Per_nombr, p.Per_apell, p.Per_telef, p.Per_cfoto, p.Per_rifpe,
         d.Din_aldea, d.Din_calle, d.Din_carre, d.Din_ncasa
-    FROM Preftmper p
-    JOIN Prefttdii d ON p.Per_cedul = d.Din_cedul
-    LEFT JOIN Prefttusu u ON p.Per_cedul = u.Usu_cedul
+    FROM preftmper p
+    JOIN prefttdii d ON p.Per_cedul = d.Din_cedul
+    LEFT JOIN prefttusu u ON p.Per_cedul = u.Usu_cedul
     WHERE u.Usu_cedul IS NULL
 ");
 $sql_sin_usuario->execute();
@@ -212,11 +212,11 @@ $sql_constancia_evento = $conexion->prepare("
         s.Sep_asist, s.Sep_statu, s.Sep_sedeb, s.Sep_fsoli, 
         s.Sep_femis, s.Sep_frech, s.Sep_motir,
         t.Tpe_nombr, a.Ald_nombr
-    FROM Prefttsep s
-    JOIN Prefttcli c ON s.Sep_clien = c.Cli_codig
-    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
-    JOIN Preftmtpe t ON s.Sep_tipoe = t.Tpe_codig
-    JOIN Preftmald a ON s.Sep_aldea = a.Ald_codig
+    FROM prefttsep s
+    JOIN prefttcli c ON s.Sep_clien = c.Cli_codig
+    JOIN preftmper p ON c.Cli_cedul = p.Per_cedul
+    JOIN preftmtpe t ON s.Sep_tipoe = t.Tpe_codig
+    JOIN preftmald a ON s.Sep_aldea = a.Ald_codig
 ");
 $sql_constancia_evento->execute();
 $result_constancia_evento = $sql_constancia_evento->get_result();
@@ -297,10 +297,10 @@ $sql_constancia_desempleo = $conexion->prepare("
         p.Per_cedul, p.Per_nombr, p.Per_apell, 
         s.Sds_codig, s.Sds_motiv, s.Sds_fsoli, s.Sds_femis, s.Sds_frech, s.Sds_motir, 
         s.Sds_statu, s.Sds_sedeb
-    FROM Prefttsds s
-    JOIN Prefttpds pd ON s.Sds_codig = pd.Pds_desem
-    JOIN Prefttcli c ON pd.Pds_clien = c.Cli_codig
-    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+    FROM prefttsds s
+    JOIN prefttpds pd ON s.Sds_codig = pd.Pds_desem
+    JOIN prefttcli c ON pd.Pds_clien = c.Cli_codig
+    JOIN preftmper p ON c.Cli_cedul = p.Per_cedul
     WHERE pd.Pds_rolcl = 4
 ");
 $sql_constancia_desempleo->execute();
@@ -404,19 +404,19 @@ $sql_permisos_mudanza = $conexion->prepare("
         vvh.Veh_añove AS vehiculo_año, vvh.Veh_color AS vehiculo_color, vvh.Veh_clase AS vehiculo_clase, vvh.Veh_placa AS vehiculo_placa, 
         vvh.Veh_smoto AS vehiculo_serial_motor, vvh.Veh_scarr AS vehiculo_serial_carroceria, 
         car.Car_marca AS vehiculo_marca, mdl.Mca_model AS vehiculo_modelo
-    FROM Prefttsmd s
-    JOIN Prefttpmd pm_solicitante ON s.Smd_codig = pm_solicitante.Pmd_mudan AND pm_solicitante.Pmd_rolcl = 9
-    JOIN Prefttcli cli_solicitante ON pm_solicitante.Pmd_clien = cli_solicitante.Cli_codig
-    JOIN Preftmper p ON cli_solicitante.Cli_cedul = p.Per_cedul
-    LEFT JOIN Preftmald v ON s.Smd_aldea = v.Ald_codig
-    LEFT JOIN Preftmmun m ON s.Smd_munll = m.Mun_codig
-    LEFT JOIN Prefttpmd pm_conductor ON s.Smd_codig = pm_conductor.Pmd_mudan AND pm_conductor.Pmd_rolcl = 10
-    LEFT JOIN Prefttcli cli_conductor ON pm_conductor.Pmd_clien = cli_conductor.Cli_codig
-    LEFT JOIN Preftmper c ON cli_conductor.Cli_cedul = c.Per_cedul
-    LEFT JOIN Prefttvyc vyc ON pm_conductor.Pmd_codig = vyc.Vyc_chofe
-    LEFT JOIN Prefttveh vvh ON vyc.Vyc_vehic = vvh.Veh_codig
-    LEFT JOIN Prefttmca mdl ON vvh.Veh_model = mdl.Mca_codig
-    LEFT JOIN Preftmcar car ON mdl.Mca_marca = car.Car_codig
+    FROM prefttsmd s
+    JOIN prefttpmd pm_solicitante ON s.Smd_codig = pm_solicitante.Pmd_mudan AND pm_solicitante.Pmd_rolcl = 9
+    JOIN prefttcli cli_solicitante ON pm_solicitante.Pmd_clien = cli_solicitante.Cli_codig
+    JOIN preftmper p ON cli_solicitante.Cli_cedul = p.Per_cedul
+    LEFT JOIN preftmald v ON s.Smd_aldea = v.Ald_codig
+    LEFT JOIN preftmmun m ON s.Smd_munll = m.Mun_codig
+    LEFT JOIN prefttpmd pm_conductor ON s.Smd_codig = pm_conductor.Pmd_mudan AND pm_conductor.Pmd_rolcl = 10
+    LEFT JOIN prefttcli cli_conductor ON pm_conductor.Pmd_clien = cli_conductor.Cli_codig
+    LEFT JOIN preftmper c ON cli_conductor.Cli_cedul = c.Per_cedul
+    LEFT JOIN prefttvyc vyc ON pm_conductor.Pmd_codig = vyc.Vyc_chofe
+    LEFT JOIN prefttveh vvh ON vyc.Vyc_vehic = vvh.Veh_codig
+    LEFT JOIN prefttmca mdl ON vvh.Veh_model = mdl.Mca_codig
+    LEFT JOIN preftmcar car ON mdl.Mca_marca = car.Car_codig
 ");
 $sql_permisos_mudanza->execute();
 $result_permisos_mudanza = $sql_permisos_mudanza->get_result();
@@ -439,9 +439,9 @@ $sql_constancia_pobreza = $conexion->prepare("
         p.Per_cedul, p.Per_nombr, p.Per_apell, 
         s.Spo_codig, s.Spo_fsoli, s.Spo_statu, s.Spo_motiv, 
         s.Spo_femis, s.Spo_frech, s.Spo_motir
-    FROM Prefttspo s
-    JOIN Prefttcli c ON s.Spo_clien = c.Cli_codig
-    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+    FROM prefttspo s
+    JOIN prefttcli c ON s.Spo_clien = c.Cli_codig
+    JOIN preftmper p ON c.Cli_cedul = p.Per_cedul
 ");
 $sql_constancia_pobreza->execute();
 $result_constancia_pobreza = $sql_constancia_pobreza->get_result();
@@ -462,9 +462,9 @@ $sql_constancia_fe_vida = $conexion->prepare("
         p.Per_cedul, p.Per_nombr, p.Per_apell, 
         f.Sfe_codig, f.Sfe_fsoli, f.Sfe_statu, f.Sfe_motiv, 
         f.Sfe_femis, f.Sfe_frech, f.Sfe_motir
-    FROM Prefttsfe f
-    JOIN Prefttcli c ON f.Sfe_clien = c.Cli_codig
-    JOIN Preftmper p ON c.Cli_cedul = p.Per_cedul
+    FROM prefttsfe f
+    JOIN prefttcli c ON f.Sfe_clien = c.Cli_codig
+    JOIN preftmper p ON c.Cli_cedul = p.Per_cedul
 ");
 $sql_constancia_fe_vida->execute();
 $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
@@ -848,10 +848,10 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                             $sql_citaciones = $conexion->prepare("
                                 SELECT 
                                     Cit_codig, Cit_fecha, Cit_horad, Cit_statu
-                                FROM Prefttcit 
+                                FROM prefttcit 
                                 WHERE Cit_perde IN (
                                     SELECT Dtd_codig
-                                    FROM Prefttdtd
+                                    FROM prefttdtd
                                     WHERE Dtd_denun = ? AND Dtd_rolde = 2
                                 )
                             ");
@@ -926,7 +926,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                     <select id="ministerio_<?php echo $index; ?>" name="ministerio">
                                         <?php
                                         // Obtener los ministerios de la tabla preftmdim
-                                        $sql_ministerios = $conexion->query("SELECT Dim_codig, Dim_nombr FROM Preftmdim");
+                                        $sql_ministerios = $conexion->query("SELECT Dim_codig, Dim_nombr FROM preftmdim");
                                         while ($ministerio = $sql_ministerios->fetch_assoc()) {
                                             echo '<option value="' . $ministerio['Dim_codig'] . '">' . $ministerio['Dim_nombr'] . '</option>';
                                         }
@@ -1536,7 +1536,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                 <select class="input-field" name="tipo_evento" id="editTipoEvento_3">
                     <?php
                     include 'conexion.php';
-                    $sql = "SELECT Tpe_codig, Tpe_nombr FROM Preftmtpe";
+                    $sql = "SELECT Tpe_codig, Tpe_nombr FROM preftmtpe";
                     $result = $conexion->query($sql);
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -1560,7 +1560,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                 <select class="input-field" name="aldea" id="editAldea_3">
                     <?php
                     include 'conexion.php';
-                    $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+                    $sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
                     $result = $conexion->query($sql);
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -1971,7 +1971,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                                 include 'conexion.php';
 
                                                 // Consulta para obtener las aldeas
-                                                $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+                                                $sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
                                                 $result = $conexion->query($sql);
 
                                                 if ($result->num_rows > 0) {
@@ -2086,7 +2086,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                                 <option value="">Seleccione una aldea</option>
                                                 <?php
                                                     include 'conexion.php';
-                                                    $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+                                                    $sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
                                                     $result = $conexion->query($sql);
                                                     while ($row = $result->fetch_assoc()) {
                                                         echo "<option value='{$row['Ald_codig']}'>{$row['Ald_nombr']}</option>";
@@ -2111,7 +2111,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                             <select class="input-field" name="municipio">
                                                 <option value="">Seleccione un municipio</option>
                                                 <?php
-                                                    $sql = "SELECT Mun_codig, Mun_nombr FROM Preftmmun";
+                                                    $sql = "SELECT Mun_codig, Mun_nombr FROM preftmmun";
                                                     $result = $conexion->query($sql);
                                                     while ($row = $result->fetch_assoc()) {
                                                         echo "<option value='{$row['Mun_codig']}'>{$row['Mun_nombr']}</option>";
@@ -2227,7 +2227,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                                     include 'conexion.php';
 
                                                     // Consulta para obtener las aldeas
-                                                    $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+                                                    $sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
                                                     $result = $conexion->query($sql);
 
                                                     if ($result->num_rows > 0) {
@@ -2271,7 +2271,7 @@ $result_constancia_fe_vida = $sql_constancia_fe_vida->get_result();
                                                     include 'conexion.php';
 
                                                     // Consulta para obtener los municipios
-                                                    $sql = "SELECT Mun_codig, Mun_nombr FROM Preftmmun";
+                                                    $sql = "SELECT Mun_codig, Mun_nombr FROM preftmmun";
                                                     $result = $conexion->query($sql);
 
                                                     if ($result->num_rows > 0) {

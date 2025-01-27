@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cedula = $_POST['cedula'];
 
     // Obtener los valores actuales de la base de datos
-    $sql_actual = "SELECT Per_nombr, Per_apell, Per_telef, Usu_corre, Usu_statu FROM Preftmper p JOIN Prefttusu u ON p.Per_cedul = u.Usu_cedul WHERE p.Per_cedul = '$cedula'";
+    $sql_actual = "SELECT Per_nombr, Per_apell, Per_telef, Usu_corre, Usu_statu FROM preftmper p JOIN prefttusu u ON p.Per_cedul = u.Usu_cedul WHERE p.Per_cedul = '$cedula'";
     $resultado = $conexion->query($sql_actual);
     $row = $resultado->fetch_assoc();
 
@@ -21,11 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rfoto = isset($_FILES['rfoto']['tmp_name']) && $_FILES['rfoto']['tmp_name'] != '' ? addslashes(file_get_contents($_FILES['rfoto']['tmp_name'])) : null;
 
     // Actualizar datos personales y correo
-    $sql_persona = "UPDATE Preftmper SET Per_nombr='$nombre', Per_apell='$apellido', Per_telef='$telefono'";
+    $sql_persona = "UPDATE preftmper SET Per_nombr='$nombre', Per_apell='$apellido', Per_telef='$telefono'";
     $sql_persona .= $cfoto ? ", Per_cfoto='$cfoto'" : "";
     $sql_persona .= " WHERE Per_cedul='$cedula'";
 
-    $sql_usuario = "UPDATE Prefttusu SET Usu_corre='$correo'";
+    $sql_usuario = "UPDATE prefttusu SET Usu_corre='$correo'";
     $sql_usuario .= $estado ? ", Usu_statu='$estado'" : "";
     $sql_usuario .= " WHERE Usu_cedul='$cedula'";
 
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar el cambio de residencia
     if ($_POST['residencia'] == 'fuera') {
         // Mover el registro a la tabla externa
-        $conexion->query("DELETE FROM Prefttdii WHERE Din_cedul='$cedula'");
+        $conexion->query("DELETE FROM prefttdii WHERE Din_cedul='$cedula'");
 
         // Insertar nuevo registro en Prefttdie
         $municipio = $_POST['municipio'];
@@ -43,11 +43,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $carre = $_POST['carre'];
         $ncasa = $_POST['ncasa'];
 
-        $sql_insert = "INSERT INTO Prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
+        $sql_insert = "INSERT INTO prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
         $conexion->query($sql_insert);
     } else {
         // Mover el registro a la tabla interna
-        $conexion->query("DELETE FROM Prefttdie WHERE Die_cedul='$cedula'");
+        $conexion->query("DELETE FROM prefttdie WHERE Die_cedul='$cedula'");
 
         // Insertar nuevo registro en Prefttdii
         $aldea = $_POST['aldea'];
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $carre1 = $_POST['carre1'];
         $ncasa1 = $_POST['ncasa1'];
 
-        $sql_insert = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle1', '$carre1', '$ncasa1')";
+        $sql_insert = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle1', '$carre1', '$ncasa1')";
         $conexion->query($sql_insert);
     }
 

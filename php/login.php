@@ -150,7 +150,7 @@
                 function obtenerNombreAldea($codigo_aldea) {
                     include('conexion.php'); // Incluye el archivo de conexión
 
-                    $sql = "SELECT Ald_nombr FROM Preftmald WHERE Ald_codig = ?";
+                    $sql = "SELECT Ald_nombr FROM preftmald WHERE Ald_codig = ?";
                     $stmt = $conexion->prepare($sql);
                     $stmt->bind_param("i", $codigo_aldea);
                     $stmt->execute();
@@ -166,7 +166,7 @@
                 function obtenerNombreMunicipio($codigo_municipio) {
                     include('conexion.php'); // Incluye el archivo de conexión
 
-                    $sql = "SELECT Mun_nombr FROM Preftmmun WHERE Mun_codig = ?";
+                    $sql = "SELECT Mun_nombr FROM preftmmun WHERE Mun_codig = ?";
                     $stmt = $conexion->prepare($sql);
                     $stmt->bind_param("i", $codigo_municipio);
                     $stmt->execute();
@@ -238,7 +238,7 @@
     					            include('conexion.php');
 
    						            // Consulta para obtener las aldeas
-    					            $sql = "SELECT Ald_codig, Ald_nombr FROM Preftmald";
+    					            $sql = "SELECT Ald_codig, Ald_nombr FROM preftmald";
     					            $result = $conexion->query($sql);
 
     					            if ($result->num_rows > 0) {
@@ -278,7 +278,7 @@
     					            include('conexion.php');
 
    						            // Consulta para obtener los municipios
-    					            $sql = "SELECT Mun_codig, Mun_nombr FROM Preftmmun";
+    					            $sql = "SELECT Mun_codig, Mun_nombr FROM preftmmun";
     					            $result = $conexion->query($sql);
 
     					            if ($result->num_rows > 0) {

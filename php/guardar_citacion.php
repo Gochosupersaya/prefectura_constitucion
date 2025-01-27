@@ -11,10 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Verificar si existe alguna citación pendiente para el denunciado en esta denuncia
     $sql_citaciones_pendientes = $conexion->prepare("
         SELECT COUNT(*) as total_pendientes
-        FROM Prefttcit
+        FROM prefttcit
         WHERE Cit_perde IN (
             SELECT Dtd_codig
-            FROM Prefttdtd
+            FROM prefttdtd
             WHERE Dtd_denun = ? AND Dtd_rolde = 2
         ) AND Cit_statu = 'pendiente'
     ");
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Obtener el código del denunciado (Dtd_ropde = 2)
         $sql_personas = $conexion->prepare("
             SELECT Dtd_codig 
-            FROM Prefttdtd
+            FROM prefttdtd
             WHERE Dtd_denun = ? AND Dtd_rolde = 2
         ");
         $sql_personas->bind_param('i', $Den_codig);
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             // Insertar la citación
             $sql_insert = $conexion->prepare("
-                INSERT INTO Prefttcit (Cit_perde, Cit_fecha, Cit_horad, Cit_statu)
+                INSERT INTO prefttcit (Cit_perde, Cit_fecha, Cit_horad, Cit_statu)
                 VALUES (?, ?, ?, ?)
             ");
             $sql_insert->bind_param('isss', $Cit_perde, $Cit_fecha, $Cit_horad, $Cit_statu);

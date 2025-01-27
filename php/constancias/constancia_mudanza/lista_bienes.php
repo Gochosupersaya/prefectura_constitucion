@@ -8,8 +8,8 @@ $sql_bienes = $conexion->prepare("
     SELECT 
         b.Bie_nombr AS nombre_bien, 
         l.Lis_canti AS cantidad
-    FROM Prefttlis l
-    JOIN Preftmbie b ON l.Lis_nbien = b.Bie_codig
+    FROM prefttlis l
+    JOIN preftmbie b ON l.Lis_nbien = b.Bie_codig
     WHERE l.Lis_mudan = ?
 ");
 $sql_bienes->bind_param("i", $smd_codig);

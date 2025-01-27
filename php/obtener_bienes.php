@@ -8,7 +8,7 @@ $dbname = "Sisbdpref";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Consulta para obtener los nombres de bienes
-$sql = "SELECT Bie_codig, Bie_nombr FROM Preftmbie";
+$sql = "SELECT Bie_codig, Bie_nombr FROM preftmbie";
 $result = $conn->query($sql);
 
 $bienes = array();

@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rfoto = isset($_FILES['rfoto']['tmp_name']) && $_FILES['rfoto']['tmp_name'] != '' ? addslashes(file_get_contents($_FILES['rfoto']['tmp_name'])) : null;
 
     // Actualizar datos personales
-    $sql_persona = "UPDATE Preftmper SET Per_nombr='$nombre', Per_apell='$apellido', Per_telef='$telefono'";
+    $sql_persona = "UPDATE preftmper SET Per_nombr='$nombre', Per_apell='$apellido', Per_telef='$telefono'";
     $sql_persona .= $cfoto ? ", Per_cfoto='$cfoto'" : "";
     $sql_persona .= $rfoto ? ", Per_rifpe='$rfoto'" : "";
     $sql_persona .= " WHERE Per_cedul='$cedula'";
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($password === $confirm_password) {
             $password_hash = password_hash($password, PASSWORD_BCRYPT);
-            $sql_usuario = "INSERT INTO Prefttusu (Usu_cedul, Usu_contr) VALUES ('$cedula', '$password_hash')";
+            $sql_usuario = "INSERT INTO prefttusu (Usu_cedul, Usu_contr) VALUES ('$cedula', '$password_hash')";
 
             if ($conexion->query($sql_usuario) !== TRUE) {
                 echo "Error al insertar la contraseña: " . $conexion->error;
@@ -40,10 +40,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $carre1 = $_POST['carre1'];
     $ncasa1 = $_POST['ncasa1'];
 
-    $sql_delete = "DELETE FROM Prefttdii WHERE Din_cedul='$cedula'";
+    $sql_delete = "DELETE FROM prefttdii WHERE Din_cedul='$cedula'";
     $conexion->query($sql_delete);
 
-    $sql_insert = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle1', '$carre1', '$ncasa1')";
+    $sql_insert = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle1', '$carre1', '$ncasa1')";
     $conexion->query($sql_insert);
 
     if ($conexion->query($sql_persona) === TRUE) {

@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reprogramar'])) {
     $id_citacion = $_POST['id_citacion'];
 
     // Actualizar el estado de la citación a "Reprogramada"
-    $query = "UPDATE Prefttcit SET Cit_statu = 'Reprogramada' WHERE Cit_codig = ?";
+    $query = "UPDATE prefttcit SET Cit_statu = 'Reprogramada' WHERE Cit_codig = ?";
     $stmt = $conexion->prepare($query);
     $stmt->bind_param('i', $id_citacion);
 

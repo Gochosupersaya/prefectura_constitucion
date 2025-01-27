@@ -32,31 +32,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Validación para evitar insertar un usuario duplicado
-    $sql = "SELECT * FROM Preftmper WHERE Per_cedul = '$cedula'";
+    $sql = "SELECT * FROM preftmper WHERE Per_cedul = '$cedula'";
     $result = $conexion->query($sql);
 
     if ($result->num_rows > 0) {
         echo "El usuario con esta cédula ya existe.";
     } else {
-        $sql = "INSERT INTO Preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
+        $sql = "INSERT INTO preftmper (Per_cedul, Per_nombr, Per_apell, Per_telef, Per_cfoto, Per_rifpe)
                 VALUES ('$cedula', '$nombre', '$apellido', '$telefono', '$cfoto_path', '$rfoto_path')";
         if ($conexion->query($sql) === TRUE) {
-            $sql = "INSERT INTO Prefttusu (Usu_cedul, Usu_corre, Usu_contr, Usu_statu) VALUES ('$cedula', '$correo', '$contrasena', 'Activo')";
+            $sql = "INSERT INTO prefttusu (Usu_cedul, Usu_corre, Usu_contr, Usu_statu) VALUES ('$cedula', '$correo', '$contrasena', 'Activo')";
             if ($conexion->query($sql) === TRUE) {
-                $sql = "INSERT INTO Prefttcli (Cli_cedul) VALUES ('$cedula')";
+                $sql = "INSERT INTO prefttcli (Cli_cedul) VALUES ('$cedula')";
                 if ($conexion->query($sql) === TRUE) {
                     if ($residencia == 'constitucion') {
                         $aldea = $_POST['aldea'];
                         $calle = $_POST['calle1'];
                         $carre = $_POST['carre1'];
                         $ncasa = $_POST['ncasa1'];
-                        $sql = "INSERT INTO Prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle', '$carre', '$ncasa')";
+                        $sql = "INSERT INTO prefttdii (Din_cedul, Din_aldea, Din_calle, Din_carre, Din_ncasa) VALUES ('$cedula', '$aldea', '$calle', '$carre', '$ncasa')";
                     } else {
                         $municipio = $_POST['municipio'];
                         $calle = $_POST['calle'];
                         $carre = $_POST['carre'];
                         $ncasa = $_POST['ncasa'];
-                        $sql = "INSERT INTO Prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
+                        $sql = "INSERT INTO prefttdie (Die_cedul, Die_munic, Die_calle, Die_carre, Die_ncasa) VALUES ('$cedula', '$municipio', '$calle', '$carre', '$ncasa')";
                     }
                     if ($conexion->query($sql) === TRUE) {
                         header("Location: sesion_admin.php#blog");

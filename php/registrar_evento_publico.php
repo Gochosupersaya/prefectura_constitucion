@@ -20,7 +20,7 @@ $asistencia = $_POST['evento-asistencia'];
 $cedula_actual = $_SESSION['cedula'];
 
 // Obtener el código del cliente a partir de la cédula
-$query_cliente = "SELECT Cli_codig FROM Prefttcli WHERE Cli_cedul = '$cedula_actual'";
+$query_cliente = "SELECT Cli_codig FROM prefttcli WHERE Cli_cedul = '$cedula_actual'";
 $result_cliente = mysqli_query($conexion, $query_cliente);
 $row_cliente = mysqli_fetch_assoc($result_cliente);
 $codigo_cliente = $row_cliente['Cli_codig'];
@@ -32,7 +32,7 @@ if (!$codigo_cliente) {
 }
 
 // Insertar los datos en la tabla Prefttsep
-$query_insert = "INSERT INTO Prefttsep (Sep_clien, Sep_tipoe, Sep_motiv, Sep_aldea, Sep_calle, Sep_carre, Sep_delug, Sep_finic, Sep_hinic, Sep_ffinl, Sep_hfinl, Sep_durac, Sep_asist, Sep_statu)
+$query_insert = "INSERT INTO prefttsep (Sep_clien, Sep_tipoe, Sep_motiv, Sep_aldea, Sep_calle, Sep_carre, Sep_delug, Sep_finic, Sep_hinic, Sep_ffinl, Sep_hfinl, Sep_durac, Sep_asist, Sep_statu)
                  VALUES ('$codigo_cliente', '$tipo_evento', '$motivo', '$aldea', '$calle', '$carrera', '$lugar', '$fecha_inicio', '$hora_inicio', '$fecha_fin', '$hora_fin', '$duracion', '$asistencia', 'Enviada')";
 
 if (mysqli_query($conexion, $query_insert)) {
